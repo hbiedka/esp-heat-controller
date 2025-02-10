@@ -20,3 +20,18 @@ void ButtonGroup::setCallbackForAll(void (*cb)(uint8_t)) {
         b.setPressCb(cb);
     }
 }
+
+void ButtonGroup::setHoldCallbackForId(uint8_t id, void (*cb)(uint8_t)) {
+    for (auto &b : buttons) {
+        if (b.getId() == id) {
+            b.setHoldCb(cb);
+            break;
+        }
+    }
+}
+
+void ButtonGroup::setHoldCallbackForAll(void (*cb)(uint8_t)) {
+    for (auto &b : buttons) {
+        b.setHoldCb(cb);
+    }
+}

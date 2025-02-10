@@ -19,12 +19,18 @@ class RLadderButton {
         uint16_t thr_high = 0;
 
         uint16_t t_press = 40; //short press time
+        uint16_t t_hold = 1000; //hold press time
+        uint16_t t_hold_decay = 100; //hold press decay time
+        uint16_t t_hold_sustain = 250; //minimum hold press time
+
+        uint16_t t_hold_buffer; //hold press buffer
 
         bool last_pressed = false;
         unsigned long state_ts = 0;
 
         // Pointer to a void function with one uint8_t argument
         void (*press_cb)(uint8_t) = nullptr;
+        void (*hold_cb)(uint8_t) = nullptr;
 
     protected:
         void CommitState(bool s);
@@ -46,6 +52,7 @@ class RLadderButton {
         void Spin(unsigned long ts);
 
         void setPressCb(void (*cb)(uint8_t));
+        void setHoldCb(void (*cb)(uint8_t));
 };
 
 #endif

@@ -12,14 +12,28 @@ class ButtonGroup {
         void Spin(unsigned long ts);
         void setCallbackForId(uint8_t id, void (*cb)(uint8_t));
         void setCallbackForAll(void (*cb)(uint8_t));
+        void setHoldCallbackForId(uint8_t id, void (*cb)(uint8_t));
+        void setHoldCallbackForAll(void (*cb)(uint8_t));
 
-        BtnState getPanelState(uint8_t id) {
+        RLadderButton *getButton(uint8_t id) {
             for (auto &b : buttons) {
                 if (b.getId() == id) {
-                    return b.btn_state;
+                    return &b;
                 }
             }
-            return UNDEFINED;
+            return nullptr;
+        }
+
+        BtnState getPanelState(uint8_t id) { 
+            RLadderButton *b = getButton(id);
+            if (b == nullptr) return UNDEFINED;
+            return b->btn_state;
+        }
+
+        bool isPressed(uint8_t id) {
+            RLadderButton *b = getButton(id);
+            if (b == nullptr) return false;
+            return b->btn_state == PRESSED || b->btn_state == HOLD;
         }
 };
 
