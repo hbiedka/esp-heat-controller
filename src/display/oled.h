@@ -4,6 +4,9 @@
 #include <Arduino.h>
 #include <Wire.h>
 
+#define OLED_WID 128
+#define OLED_HEI 8  //8 pages (=64px)
+
 class Oled {
 
     private:
@@ -11,6 +14,8 @@ class Oled {
 
         void cmd(uint8_t c);
     public:
+        uint8_t width = OLED_WID;
+        uint8_t height = OLED_HEI;
         Oled(uint8_t a) : address(a) {};
         void Init();
         void Clear();
