@@ -1,16 +1,14 @@
 #include "oledUi.h"
 
-// TextField TextField::&operator=(const TextField &tf) {
-//     x = tf.x;
-//     y = tf.y;
-//     font = tf.font;
-//     offset = tf.offset;
-//     Serial.println("TextField::operator=");
-//     return *this;
-// }
-
 
 void TextField::Print(const String &s) {
     if (oled == nullptr) return;        //TODO: throw exception
+
+    Clear();
+    //TODO: limit length
     oled->PrintStr(s,font,x,y,offset);
+}
+
+void TextField::Clear() {
+    oled->ClearStr(x,y,len);
 }
