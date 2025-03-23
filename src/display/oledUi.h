@@ -70,7 +70,10 @@ class Ui {
 
     public:
         Ui(Oled *_oled, std::vector<UiTemplateEntry> _entries);
-        UiBlock &operator[](size_t i) { return blocks[i]; }
+        Ui(std::vector<UiTemplateEntry> _entries);
+        void SetOled(Oled *oled);
+        UiBlock &operator[](size_t i) { return blocks[i]; };
+        unsigned int getBlocksNum() { return blocks.size(); };
 };
 
 #endif

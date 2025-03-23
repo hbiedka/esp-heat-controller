@@ -17,10 +17,7 @@ void setup() {
 
   delay(1000);
 
-  oled.Clear();
-
-  menu[0].tfList[0].Print("Pump1");
-  menu[0].tfList[1].Print("?");
+  m.Show();
 }
 
 void loop() {
@@ -43,9 +40,6 @@ void loop() {
         s+= "->";
       }
       s+= pumps[i]->h_data.state == ON || pumps[i]->h_data.state == DELAY_TO_ON ? "ON" : "OFF";
-
-      menu[0].tfList[1].Print(s);
-
 
     }
   }

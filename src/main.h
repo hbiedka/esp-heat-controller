@@ -10,6 +10,8 @@
 #include "display/oled.h"
 #include "display/oledUi.h"
 
+#include "ui/menu.h"
+
 
 #define OLED_ADDR 0x3c
 
@@ -43,13 +45,23 @@ std::vector<Heater*> pumps{&pump1,&pump2};
 Selftest selftest(outputs,&panel);
 
 Oled oled(OLED_ADDR);
-UiBlock menuItem({
-    TextField(2,0,60,0,0),
-    TextField(64,0,60,1,0)
-});
 
-Ui menu(&oled,{
-    {menuItem,0,0}
-});
+String boolLabels[2] = {"Yes","No"};
+
+bool v1 = false;
+bool v2 = true;
+bool v3 = true;
+
+std::vector<MenuItem> mItems = {
+    {"Label 1",BOOL,boolLabels,{&v1},0,0},
+    {"Label 2",BOOL,boolLabels,{&v2},0,0},
+    {"Label 3",BOOL,boolLabels,{&v3},0,0},
+    {"Label 4",BOOL,boolLabels,{&v1},0,0},
+    {"Label 5",BOOL,boolLabels,{&v2},0,0},
+    {"Label 6",BOOL,boolLabels,{&v3},0,0},
+
+};
+
+Menu m(mItems,&panel,&oled);
 
 #endif 
