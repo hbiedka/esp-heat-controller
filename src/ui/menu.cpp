@@ -47,6 +47,10 @@ void Menu::buttonEnter() {
         bool *val = item.value.boolean;
         *val = !*val;
 
+    } else if (item.type == ENUM) {
+        int *val = item.value.numeric;
+        (*val)++;
+        if (*val >= item.maxVal) *val = 0;
     }
     
     //if intenger
@@ -152,6 +156,15 @@ void Menu::RedrawValueOnPos(unsigned int posToRedraw) {
 
         bool *val = item.value.boolean;
         ui[uiPosToRedraw][1].Print( labels[*val ? 1 : 0] );
+    } else if (item.type == ENUM && item.value.numeric != nullptr && item.enumLabels != nullptr ) {
+        //enumLabels ptr is mandatory
+        int *val = item.value.numeric;
+        
+        //deal with negative values
+        //TODO throw exception
+        if (*val < 0) *val = 0;
+
+        ui[uiPosToRedraw][1].Print( item.enumLabels[*val] );
     }
 
 }

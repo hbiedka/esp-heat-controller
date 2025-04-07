@@ -47,19 +47,20 @@ Selftest selftest(outputs,&panel);
 Oled oled(OLED_ADDR);
 
 String boolLabels[2] = {"Yes","No"};
+String enumLabels[4] = {"Alpha","Bravo","Charlie","Delta"};
 
 bool v1 = false;
 bool v2 = true;
 bool v3 = true;
+int v4 = 0;
+int v5 = 0;
 
-std::vector<MenuItem> mItems = {
-    {"Label 1",BOOL,boolLabels,{&v1},0,0},
-    {"Label 2",BOOL,boolLabels,{&v2},0,0},
-    {"Label 3",BOOL,boolLabels,{&v3},0,0},
-    {"Label 4",BOOL,boolLabels,{&v1},0,0},
-    {"Label 5",BOOL,boolLabels,{&v2},0,0},
-    {"Label 6",BOOL,boolLabels,{&v3},0,0},
-
+std::vector<MenuItem> mItems{
+    MenuItem{"Bool 1", BOOL, boolLabels, {&v1}, 0, 0},
+    MenuItem{"Bool 2", BOOL, boolLabels, {&v2}, 0, 0},
+    MenuItem{"Bool 3", BOOL, boolLabels, {&v3}, 0, 0},
+    MenuItem{"Enum 4", ENUM, enumLabels, { .numeric = &v4}, 0, 4},
+    MenuItem{"Enum 5", ENUM, enumLabels, { .numeric = &v5}, 0, 4}
 };
 
 Menu m(mItems,&panel,&oled);
