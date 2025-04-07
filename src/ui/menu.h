@@ -49,6 +49,7 @@ class Menu {
 
         unsigned int pos = 0;
         unsigned int scrollPos = 0;
+        bool valueEdit = false;
 
         Menu *prev = nullptr;
 

@@ -27,14 +27,35 @@ void Menu::Show(Menu *_prev) {
 
 //up/down buttons callbacks
 void Menu::buttonUp() {
-    if(pos > 0) pos--;
-    Redraw();
+    if (valueEdit) {
+        MenuItem &item = items[pos];
+        if (item.type == ENUM) {
+            int *val = item.value.numeric;
+            if (*val > 0)
+                (*val)--;
+            else
+                *val = item.maxVal - 1;
+        }
+        RedrawValueOnPos(pos);
+    } else {
+        if(pos > 0) pos--;
+        Redraw();
+    }
 
 }
 void Menu::buttonDown() {
-    if(pos < items.size()-1 ) pos++;
-    Redraw();
-
+    if (valueEdit) {
+        MenuItem &item = items[pos];
+        if (item.type == ENUM) {
+            int *val = item.value.numeric;
+            (*val)++;
+            if (*val >= item.maxVal) *val = 0;
+        }
+        RedrawValueOnPos(pos);
+    } else {
+        if(pos < items.size()-1 ) pos++;
+        Redraw();
+    }
 }
 
 //callback when the Enter key is pressed
@@ -48,9 +69,8 @@ void Menu::buttonEnter() {
         *val = !*val;
 
     } else if (item.type == ENUM) {
-        int *val = item.value.numeric;
-        (*val)++;
-        if (*val >= item.maxVal) *val = 0;
+        valueEdit = !valueEdit;
+        Redraw(true);
     }
     
     //if intenger
@@ -88,6 +108,7 @@ void Menu::Show() {
         bg->setCallbackForAll(buttonCbWrapper);
         bg->setHoldCallbackForAll(buttonHoldCbWrapper);
     } 
+    valueEdit = false;
     
     //draw all
     Redraw(true);
@@ -119,6 +140,9 @@ void Menu::Redraw(boolean forceRedraw) {
         unsigned int posWScrollOffset; 
         for (i = 0; i < getMenuItemsOnDisplay(); i++) {
             posWScrollOffset = i + scrollPos;
+            //if in value edit mode, draw only selected item
+            if (valueEdit && posWScrollOffset != pos) continue;
+
             if ( posWScrollOffset < items.size() ) {
 
                 ui[i][0].Print(items[posWScrollOffset].label);
