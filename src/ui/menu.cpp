@@ -35,6 +35,9 @@ void Menu::buttonUp() {
                 (*val)--;
             else
                 *val = item.maxVal - 1;
+        } else if (item.type == INT) {
+            int *val = item.value.numeric;
+            if (*val > item.minVal) (*val)--;
         }
         RedrawValueOnPos(pos);
     } else {
@@ -50,6 +53,9 @@ void Menu::buttonDown() {
             int *val = item.value.numeric;
             (*val)++;
             if (*val >= item.maxVal) *val = 0;
+        } else if (item.type == INT) {
+            int *val = item.value.numeric;
+            if (*val < item.maxVal) (*val)++;
         }
         RedrawValueOnPos(pos);
     } else {
@@ -68,7 +74,7 @@ void Menu::buttonEnter() {
         bool *val = item.value.boolean;
         *val = !*val;
 
-    } else if (item.type == ENUM) {
+    } else if (item.type == ENUM || item.type == INT) {
         valueEdit = !valueEdit;
         Redraw(true);
     }
@@ -96,7 +102,12 @@ void Menu::buttonCb(uint8_t id) {
 }
 
 void Menu::buttonHoldCb(uint8_t id) {
-    //TODO
+    //enter button does not provide on-hold action
+    switch(id) {
+        case 1: buttonUp(); break;
+        case 3: buttonDown(); break;
+        default: break;
+    }
 }
 
 
@@ -189,6 +200,9 @@ void Menu::RedrawValueOnPos(unsigned int posToRedraw) {
         if (*val < 0) *val = 0;
 
         ui[uiPosToRedraw][1].Print( item.enumLabels[*val] );
+    } else if (item.type == INT && item.value.numeric != nullptr) {
+        int *val = item.value.numeric;
+        ui[uiPosToRedraw][1].Print( String{*val} );
     }
 
 }
