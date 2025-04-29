@@ -19,9 +19,9 @@ class RLadderButton {
         uint16_t thr_high = 0;
 
         uint16_t t_press = 40; //short press time
-        uint16_t t_hold = 1000; //hold press time
-        uint16_t t_hold_decay = 100; //hold press decay time
-        uint16_t t_hold_sustain = 250; //minimum hold press time
+        uint16_t t_hold = 500; //hold press time
+        uint16_t t_hold_decay = 75; //hold press decay time
+        uint16_t t_hold_sustain = 50; //minimum hold press time
 
         uint16_t t_hold_buffer; //hold press buffer
 
