@@ -2,6 +2,7 @@
 #define HEATER_H
 
 #include <Arduino.h>
+#include <objectModel/ObjectModel.h>
 
 enum HeaterState {
     OFF = 0,
@@ -17,7 +18,7 @@ struct HeaterData {
     unsigned int timeTo;
 };
 
-class Heater {
+class Heater : public ObjectModel {
     private:
         bool firstRun;
         uint8_t pin;
@@ -44,6 +45,8 @@ class Heater {
         unsigned int getTimeToOff(unsigned long ts);
         HeaterState getState() { return state; };
         bool watch(unsigned long ts);
+
+        ObjectModelItemList &getObjectModel();
 };
 
 

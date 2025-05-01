@@ -1,9 +1,13 @@
 #include <stdlib.h>
 
+#include "util/interval.h"
+#include "objectModel/ObjectModel.h"
 #include "main.h"
 
 const char degC_cstr[] = {127,'C','\0'};
 String degC{degC_cstr};
+
+IntervalOperation sendHtrStatus(3000);
 
 void setup() {
 
@@ -11,7 +15,6 @@ void setup() {
   digitalWrite(PIN_LED_STATUS,0);
 
   Serial.begin(9600);
-  pump1.setLogCb([](String msg) { Serial.println(msg); });
 
   oled.Init();
 
@@ -32,16 +35,8 @@ void loop() {
   pump1.Spin(ts);
   pump2.Spin(ts);
 
-  for (size_t i = 0; i < pumps.size(); i++) {
-    if (pumps[i]->watch(ts)) {
-      String s;
-      if (pumps[i]->h_data.state == DELAY_TO_OFF || pumps[i]->h_data.state == DELAY_TO_ON) {
-        s+= String{pumps[i]->h_data.timeTo};
-        s+= "->";
-      }
-      s+= pumps[i]->h_data.state == ON || pumps[i]->h_data.state == DELAY_TO_ON ? "ON" : "OFF";
-
-    }
+  if (sendHtrStatus.trig()) {
+    Serial.println(pump2.serialize().c_str());
   }
 
 }

@@ -5,6 +5,14 @@ Heater::Heater(uint8_t _pin, bool *_input) {
     input = _input;
     pinMode(pin,OUTPUT);
     digitalWrite(pin,0);
+    omItems ={
+        ObjectModelItem{ "name", ObjectModelItemType::STRING, ObjectModelItemValue{std::string{"Heater"}} },
+        ObjectModelItem{ "state", ObjectModelItemType::INT, ObjectModelItemValue{0} },
+        ObjectModelItem{ "timeToNextState", ObjectModelItemType::INT, ObjectModelItemValue{0} },
+        ObjectModelItem{ "on", ObjectModelItemType::BOOL, ObjectModelItemValue{false} },
+        ObjectModelItem{ "delayToOn", ObjectModelItemType::INT, ObjectModelItemValue{0} },
+        ObjectModelItem{ "delayToOff", ObjectModelItemType::INT, ObjectModelItemValue{0} }
+    };
 
     firstRun = true;
 }
@@ -68,6 +76,7 @@ unsigned int Heater::getTimeToOff(unsigned long ts) {
     }
 }
 
+//to be deprecated and replaced by ObjectModel/ some triggers?
 bool Heater::watch(unsigned long ts) {
     bool ret = false;
     unsigned int t_to = 0;
@@ -94,4 +103,22 @@ bool Heater::watch(unsigned long ts) {
     }
 
     return ret;
+}
+
+std::vector<ObjectModelItem>& Heater::getObjectModel() {
+    auto ts = millis();
+    int om_time_to_next_state = 0;
+
+    //calculate cache OM variables
+    if (state == DELAY_TO_ON) om_time_to_next_state = getTimeToOn(ts);
+    else if (state == DELAY_TO_OFF) om_time_to_next_state = getTimeToOff(ts);
+
+    //update OM values
+    omItems[1].value =  static_cast<int>(state);
+    omItems[2].value = om_time_to_next_state;
+    omItems[3].value = state == ON || state == DELAY_TO_OFF;
+    omItems[4].value = static_cast<int>(delay_to_on);
+    omItems[5].value = static_cast<int>(delay_to_off);
+
+    return omItems;
 }
