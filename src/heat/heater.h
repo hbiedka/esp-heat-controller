@@ -11,12 +11,23 @@ enum HeaterState {
     DELAY_TO_OFF
 };
 
-// String HeaterStateStrs[] = {"OFF","->ON","ON","->OFF"};
-
 struct HeaterData {
     HeaterState state;
     unsigned int timeTo;
 };
+
+class Heater;
+
+class HeaterDelaySetter : public ObjectModelSetter {
+    private:
+        Heater &htr;
+    public:
+        HeaterDelaySetter(Heater &_htr) :
+            htr(_htr)
+        {};
+        ObjectModelSetterReturn operator()(const std::string &label, const ObjectModelItemValue &value) override;
+};
+
 
 class Heater : public ObjectModel {
     private:
@@ -32,6 +43,8 @@ class Heater : public ObjectModel {
 
         void (*log_cb)(String) = nullptr;
     public:
+        friend class HeaterDelaySetter;
+    
         HeaterData h_data = {OFF,0};
 
         Heater(uint8_t _pin, bool *input);
@@ -47,6 +60,7 @@ class Heater : public ObjectModel {
         bool watch(unsigned long ts);
 
         ObjectModelItemList &getObjectModel();
+        HeaterDelaySetter delaySetterFunctor;
 };
 
 

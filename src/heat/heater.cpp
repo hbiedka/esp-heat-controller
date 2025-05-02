@@ -1,17 +1,20 @@
 #include "heater.h"
 
-Heater::Heater(uint8_t _pin, bool *_input) {
+Heater::Heater(uint8_t _pin, bool *_input) :
+    delaySetterFunctor(*this)
+{
     pin = _pin;
     input = _input;
     pinMode(pin,OUTPUT);
     digitalWrite(pin,0);
+
     omItems ={
         ObjectModelItem{ "name", ObjectModelItemType::STRING, ObjectModelItemValue{std::string{"Heater"}} },
         ObjectModelItem{ "state", ObjectModelItemType::INT, ObjectModelItemValue{0} },
         ObjectModelItem{ "timeToNextState", ObjectModelItemType::INT, ObjectModelItemValue{0} },
         ObjectModelItem{ "on", ObjectModelItemType::BOOL, ObjectModelItemValue{false} },
-        ObjectModelItem{ "delayToOn", ObjectModelItemType::INT, ObjectModelItemValue{0} },
-        ObjectModelItem{ "delayToOff", ObjectModelItemType::INT, ObjectModelItemValue{0} }
+        ObjectModelItem{ "delayToOn", ObjectModelItemType::INT, ObjectModelItemValue{0}, &delaySetterFunctor },
+        ObjectModelItem{ "delayToOff", ObjectModelItemType::INT, ObjectModelItemValue{0}, &delaySetterFunctor }
     };
 
     firstRun = true;
@@ -121,4 +124,24 @@ std::vector<ObjectModelItem>& Heater::getObjectModel() {
     omItems[5].value = static_cast<int>(delay_to_off);
 
     return omItems;
+}
+
+ObjectModelSetterReturn HeaterDelaySetter::operator()(const std::string &label, const ObjectModelItemValue &value)
+{
+    if (!std::holds_alternative<int>(value))
+        return ObjectModelSetterReturn::INVTYPE;
+    
+    int ival = std::get<int>(value);
+    if (ival < 0 || ival > 1000000)
+        return ObjectModelSetterReturn::INVVAL;
+
+    if (label == "delayToOn") {
+        htr.delay_to_on = ival;
+    } else if (label == "delayToOff") {
+        htr.delay_to_off = ival;
+    } else {
+        return ObjectModelSetterReturn::INVLABEL;
+    }
+    
+    return ObjectModelSetterReturn::OK;
 }

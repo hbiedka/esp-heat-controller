@@ -46,10 +46,12 @@ std::string ObjectModel::serialize() {
                 break;
                 
             case ObjectModelItemType::LINK:
-                if (item.link != nullptr) {
-                    // Assuming ObjectModel has a method to serialize itself
-                    // result += item.link->serialize(); // Uncomment if ObjectModel has a serialize method
-                    result += "link"; // Placeholder for link serialization
+                if (std::holds_alternative<ObjectModel*>(item.value)) {
+                    ObjectModel *linked_ob = std::get<ObjectModel*>(item.value);
+                    if (linked_ob != nullptr)
+                        result += linked_ob->serialize();
+                    else
+                        result += "{}";
                 } else {
                     result += "null";
                 }
@@ -59,4 +61,28 @@ std::string ObjectModel::serialize() {
     
     result += "}";
     return result;
+}
+
+int ObjectModel::getIndexFromLabel(const std::string &label) {
+    auto it = std::find_if(omItems.begin(), omItems.end(),
+        [label](ObjectModelItem item){
+            return item.label == label;
+        }
+    );
+    if (it == omItems.end())
+        return -1;
+
+    return std::distance(omItems.begin(),it);
+}
+
+ObjectModelSetterReturn ObjectModel::setProperty(const std::string &label, const ObjectModelItemValue &value) {
+    //find index
+    int index = getIndexFromLabel(label);
+    if (index < 0 || (unsigned int)index >= omItems.size() )
+        return ObjectModelSetterReturn::INVLABEL;
+
+    if (omItems[index].setter == nullptr)
+        return ObjectModelSetterReturn::READONLY;
+
+    return (*omItems[index].setter)(label,value);
 }

@@ -15,15 +15,31 @@ enum class ObjectModelItemType {
     LINK
 };
 
-using ObjectModelItemValue = std::variant<int, bool, std::string>;
-using ObjectModelSetter = int (*)(const ObjectModelItemValue&);
+enum class ObjectModelSetterReturn {
+    OK = 0,
+    INVTYPE,
+    INVVAL,
+    INVLABEL,
+    INVFUNC,
+    READONLY,
+    NOT_IMPLEMENTED
+};
+
+using ObjectModelItemValue = std::variant<int, bool, std::string, ObjectModel* >;
+
+class ObjectModelSetter {
+    public:
+        virtual ObjectModelSetterReturn operator()(const std::string &label, const ObjectModelItemValue &value) {
+            return ObjectModelSetterReturn::NOT_IMPLEMENTED;
+        }
+        virtual ~ObjectModelSetter() = default;
+};
 
 struct ObjectModelItem {
     std::string label;
     ObjectModelItemType type;
     ObjectModelItemValue value;
-    ObjectModel *link = nullptr; // Pointer to another ObjectModel if type is LINK
-    ObjectModelSetter setter = nullptr; // Setter function for the item
+    ObjectModelSetter *setter = nullptr; // Pointer to setter function for the item
 
 };
 
@@ -35,6 +51,8 @@ class ObjectModel {
     public:
         virtual ObjectModelItemList &getObjectModel(){ return omItems; };
         std::string serialize();
+        int getIndexFromLabel(const std::string &label);
+        ObjectModelSetterReturn setProperty(const std::string &label, const ObjectModelItemValue &value);
 };
 
 #endif 
