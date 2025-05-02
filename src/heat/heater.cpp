@@ -9,12 +9,12 @@ Heater::Heater(uint8_t _pin, bool *_input) :
     digitalWrite(pin,0);
 
     omItems ={
-        ObjectModelItem{ "name", ObjectModelItemType::STRING, ObjectModelItemValue{std::string{"Heater"}} },
-        ObjectModelItem{ "state", ObjectModelItemType::INT, ObjectModelItemValue{0} },
-        ObjectModelItem{ "timeToNextState", ObjectModelItemType::INT, ObjectModelItemValue{0} },
-        ObjectModelItem{ "on", ObjectModelItemType::BOOL, ObjectModelItemValue{false} },
-        ObjectModelItem{ "delayToOn", ObjectModelItemType::INT, ObjectModelItemValue{0}, &delaySetterFunctor },
-        ObjectModelItem{ "delayToOff", ObjectModelItemType::INT, ObjectModelItemValue{0}, &delaySetterFunctor }
+        ObjectModelItem{ "name", ObjectModelItemValue{std::string{"Heater"}} },
+        ObjectModelItem{ "state", ObjectModelItemValue{0} },
+        ObjectModelItem{ "timeToNextState", ObjectModelItemValue{0} },
+        ObjectModelItem{ "on", ObjectModelItemValue{false} },
+        ObjectModelItem{ "delayToOn", ObjectModelItemValue{0}, &delaySetterFunctor },
+        ObjectModelItem{ "delayToOff", ObjectModelItemValue{0}, &delaySetterFunctor }
     };
 
     firstRun = true;

@@ -8,13 +8,6 @@
 
 class ObjectModel;
 
-enum class ObjectModelItemType {
-    BOOL = 0,
-    INT,
-    STRING,
-    LINK
-};
-
 enum class ObjectModelSetterReturn {
     OK = 0,
     INVTYPE,
@@ -37,7 +30,6 @@ class ObjectModelSetter {
 
 struct ObjectModelItem {
     std::string label;
-    ObjectModelItemType type;
     ObjectModelItemValue value;
     ObjectModelSetter *setter = nullptr; // Pointer to setter function for the item
 
