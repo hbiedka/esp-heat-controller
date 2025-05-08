@@ -21,9 +21,10 @@ enum MenuItemType {
 struct MenuItem {
     String label;                   // Label
     MenuItemType type = BOOL;       // type selector
-    String *enumLabels = nullptr;   // for Bool, alternative labels {"Value if false","Value if true"}
-                                    // for Enum, hold enum labels (remember to pass the size in max_value)
-                                    // ignored for any other type
+
+    const std::vector<String> &enumLabels;  // for Bool, alternative labels {"Value if false","Value if true"}
+                                            // for Enum, hold enum labels (remember to pass the size in max_value)
+                                            // ignored for any other type
 
     const MenuValueIface &iface;    // interface with get/set methods for int and bool
                                     // and get method for link
