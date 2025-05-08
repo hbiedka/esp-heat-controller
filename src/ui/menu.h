@@ -6,6 +6,8 @@
 #include "display/oled.h"
 #include "display/oledUi.h"
 
+#include "menuValueIface.h"
+
 class Menu;
 
 enum MenuItemType {
@@ -16,27 +18,15 @@ enum MenuItemType {
     BACK        //backs to previous menu
 };
 
-//union for storing value handlers, depending of type
-union MenuValue {
-    bool *boolean = nullptr;      //BOOL
-    int *numeric;       //ENUM or INT
-    Menu *link;         //LINK
-};
-
 struct MenuItem {
     String label;                   // Label
     MenuItemType type = BOOL;       // type selector
     String *enumLabels = nullptr;   // for Bool, alternative labels {"Value if false","Value if true"}
                                     // for Enum, hold enum labels (remember to pass the size in max_value)
                                     // ignored for any other type
-    MenuValue value;                // handler to value
-                                    // for bool: points to bool
-                                    // for enum: index of selected  (points to unsigned int or size_t)
-                                    // for int - value (points to int)
-                                    // for link - handler to next Menu object (points to Menu object)
 
-    int minVal = 0;               // min val, ignored for non-ints, can be negative
-    int maxVal = 0;               // max val for int, size for enu
+    const MenuValueIface &iface;    // interface with get/set methods for int and bool
+                                    // and get method for link
 };
 
 class Menu {

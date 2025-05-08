@@ -57,12 +57,12 @@ int v5 = 0;
 int v6 = 0;
 
 std::vector<MenuItem> mItems{
-    MenuItem{"Bool 1", BOOL, boolLabels, {&v1}, 0, 0},
-    MenuItem{"Bool 2", BOOL, boolLabels, {&v2}, 0, 0},
-    MenuItem{"Bool 3", BOOL, boolLabels, {&v3}, 0, 0},
-    MenuItem{"Enum 4", ENUM, enumLabels, { .numeric = &v4}, 0, 4},
-    MenuItem{"Enum 5", ENUM, enumLabels, { .numeric = &v5}, 0, 4},
-    MenuItem{"Int 6", INT, nullptr, { .numeric = &v6}, -100, 100},
+    MenuItem{"Bool 1", BOOL, boolLabels, BoolMenuValueIface{v1}},
+    MenuItem{"Bool 2", BOOL, boolLabels, BoolMenuValueIface{v2}},
+    MenuItem{"Bool 3", BOOL, boolLabels, BoolMenuValueIface{v3}},
+    MenuItem{"Enum 4", ENUM, enumLabels, IntMenuValueIface{v4,4}},
+    MenuItem{"Enum 5", ENUM, enumLabels, IntMenuValueIface{v5,4}},
+    MenuItem{"Int 6", INT, nullptr, IntMenuValueIface{v6,-100,100}},
 };
 
 Menu m(mItems,&panel,&oled);

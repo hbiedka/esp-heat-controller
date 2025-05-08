@@ -29,15 +29,22 @@ void Menu::Show(Menu *_prev) {
 void Menu::buttonUp() {
     if (valueEdit) {
         MenuItem &item = items[pos];
+        MenuSetterReturn ret;
+
         if (item.type == ENUM) {
-            int *val = item.value.numeric;
-            if (*val > 0)
-                (*val)--;
-            else
-                *val = item.maxVal - 1;
+            int val;
+            if (item.iface.get(val) == MenuGetterReturn::OK) {
+                ret = item.iface.set(++val);
+                if (ret == MenuSetterReturn::VAL_TOO_BIG) {
+                    val = 0;
+                    ret = item.iface.set(val); 
+                }
+            }
+
         } else if (item.type == INT) {
-            int *val = item.value.numeric;
-            if (*val > item.minVal) (*val)--;
+            int val;
+            if (item.iface.get(val) == MenuGetterReturn::OK)
+                ret = item.iface.set(++val);
         }
         RedrawValueOnPos(pos);
     } else {
@@ -49,13 +56,27 @@ void Menu::buttonUp() {
 void Menu::buttonDown() {
     if (valueEdit) {
         MenuItem &item = items[pos];
+        MenuSetterReturn ret;
+
         if (item.type == ENUM) {
-            int *val = item.value.numeric;
-            (*val)++;
-            if (*val >= item.maxVal) *val = 0;
+            int val;
+            if (item.iface.get(val) == MenuGetterReturn::OK) {
+                ret = item.iface.set(--val);
+                if (ret == MenuSetterReturn::VAL_TOO_SMALL) {
+                    // we don't know the max limit, but we can bump the value until it reach
+                    // the ceiling
+                    val = 0;
+                    do {
+                        ret = item.iface.set(++val);
+                    } while (ret != MenuSetterReturn::VAL_TOO_BIG);
+                }
+            }
+
         } else if (item.type == INT) {
-            int *val = item.value.numeric;
-            if (*val < item.maxVal) (*val)++;
+            int val;
+            if (item.iface.get(val) == MenuGetterReturn::OK)
+                ret = item.iface.set(--val);
+
         }
         RedrawValueOnPos(pos);
     } else {
@@ -67,20 +88,22 @@ void Menu::buttonDown() {
 //callback when the Enter key is pressed
 void Menu::buttonEnter() {
     MenuItem &item = items[pos];
+    MenuSetterReturn ret;
     
     //if bool
     if (item.type == BOOL) {
         //change state
-        bool *val = item.value.boolean;
-        *val = !*val;
+        bool val;
+        if (item.iface.get(val) == MenuGetterReturn::OK) {
+            val = !val;
+            ret = item.iface.set(val);
+        }
 
     } else if (item.type == ENUM || item.type == INT) {
         valueEdit = !valueEdit;
         Redraw(true);
     }
     
-    //if intenger
-        //enter the integer edit
     //if link
         //set previous 
         //go to link
@@ -184,25 +207,32 @@ void Menu::RedrawValueOnPos(unsigned int posToRedraw) {
     unsigned int uiPosToRedraw = posToRedraw-scrollPos;
 
     MenuItem &item = items[posToRedraw];
+    MenuGetterReturn ret;
     
-    //TODO this one will be separate function to handle every possible case
-    if (item.type == BOOL && item.value.boolean != nullptr ) {
+    if (item.type == BOOL ) {
         String *labels = item.enumLabels != nullptr ? item.enumLabels : defaultBoolLabels;
 
-        bool *val = item.value.boolean;
-        ui[uiPosToRedraw][1].Print( labels[*val ? 1 : 0] );
-    } else if (item.type == ENUM && item.value.numeric != nullptr && item.enumLabels != nullptr ) {
-        //enumLabels ptr is mandatory
-        int *val = item.value.numeric;
+        bool val;
+        ret = item.iface.get(val);
+
+        if (ret == MenuGetterReturn::OK)
+            ui[uiPosToRedraw][1].Print( labels[val ? 1 : 0] );
+    } else if (item.type == ENUM && item.enumLabels != nullptr ) {
+        int val;
+        ret = item.iface.get(val);
         
         //deal with negative values
         //TODO throw exception
-        if (*val < 0) *val = 0;
+        if (val < 0) val = 0;
 
-        ui[uiPosToRedraw][1].Print( item.enumLabels[*val] );
-    } else if (item.type == INT && item.value.numeric != nullptr) {
-        int *val = item.value.numeric;
-        ui[uiPosToRedraw][1].Print( String{*val} );
+        if (ret == MenuGetterReturn::OK)
+            ui[uiPosToRedraw][1].Print( item.enumLabels[val] );
+    } else if (item.type == INT ) {
+        int val;
+        ret = item.iface.get(val);
+
+        if (ret == MenuGetterReturn::OK)
+            ui[uiPosToRedraw][1].Print( String{val} );
     }
 
 }
