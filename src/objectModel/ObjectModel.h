@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <variant>
 #include <string>
-#include <vector>
+#include <map>
 
 class ObjectModel;
 
@@ -29,21 +29,21 @@ class ObjectModelSetter {
 };
 
 struct ObjectModelItem {
-    std::string label;
+    // std::string label;
     ObjectModelItemValue value;
     ObjectModelSetter *setter = nullptr; // Pointer to setter function for the item
 
 };
 
-using ObjectModelItemList = std::vector<ObjectModelItem>;
+using ObjectModelItemMap = std::map<std::string, ObjectModelItem>;
 
 class ObjectModel {
     protected:
-        ObjectModelItemList omItems;
+        ObjectModelItemMap omItems;
     public:
-        virtual ObjectModelItemList &getObjectModel(){ return omItems; };
+        virtual ObjectModelItemMap &getObjectModel(){ return omItems; };
         std::string serialize();
-        int getIndexFromLabel(const std::string &label);
+        // int getIndexFromLabel(const std::string &label);
         ObjectModelSetterReturn setProperty(const std::string &label, const ObjectModelItemValue &value);
 };
 

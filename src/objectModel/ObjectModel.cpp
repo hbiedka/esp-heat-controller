@@ -1,20 +1,24 @@
 #include "ObjectModel.h"
 
 std::string ObjectModel::serialize() {
-    ObjectModelItemList &om = getObjectModel();
+    ObjectModelItemMap &om = getObjectModel();
 
     std::string result = "{";
+    bool first_run = true;
     
-    for (size_t i = 0; i < om.size(); i++) {
-        const auto& item = om[i];
+    for ( auto& map_item : om ) {
+        const auto& label = map_item.first;
+        const auto& item = map_item.second;
         
         // Add comma if not first item
-        if (i > 0) {
+        if (first_run) {
+            first_run = false;
+        } else {
             result += ",";
         }
         
         // Add property name
-        result += "\"" + item.label + "\":";
+        result += "\"" + label + "\":";
         
         // Add value based on type
         if (std::holds_alternative<bool>(item.value)) {
@@ -39,6 +43,7 @@ std::string ObjectModel::serialize() {
     return result;
 }
 
+/*
 int ObjectModel::getIndexFromLabel(const std::string &label) {
     auto it = std::find_if(omItems.begin(), omItems.end(),
         [label](ObjectModelItem item){
@@ -50,15 +55,18 @@ int ObjectModel::getIndexFromLabel(const std::string &label) {
 
     return std::distance(omItems.begin(),it);
 }
+    */
 
 ObjectModelSetterReturn ObjectModel::setProperty(const std::string &label, const ObjectModelItemValue &value) {
+
     //find index
-    int index = getIndexFromLabel(label);
-    if (index < 0 || (unsigned int)index >= omItems.size() )
+    auto it = omItems.find(label);
+    if (it == omItems.end())
+        //no label like this
         return ObjectModelSetterReturn::INVLABEL;
 
-    if (omItems[index].setter == nullptr)
+    if (it->second.setter == nullptr)
         return ObjectModelSetterReturn::READONLY;
 
-    return (*omItems[index].setter)(label,value);
+    return (*it->second.setter)(label,value);
 }

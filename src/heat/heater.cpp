@@ -8,13 +8,13 @@ Heater::Heater(uint8_t _pin, bool *_input) :
     pinMode(pin,OUTPUT);
     digitalWrite(pin,0);
 
-    omItems ={
-        ObjectModelItem{ "name", ObjectModelItemValue{std::string{"Heater"}} },
-        ObjectModelItem{ "state", ObjectModelItemValue{0} },
-        ObjectModelItem{ "timeToNextState", ObjectModelItemValue{0} },
-        ObjectModelItem{ "on", ObjectModelItemValue{false} },
-        ObjectModelItem{ "delayToOn", ObjectModelItemValue{0}, &delaySetterFunctor },
-        ObjectModelItem{ "delayToOff", ObjectModelItemValue{0}, &delaySetterFunctor }
+    omItems = {
+        {"name", ObjectModelItem{ ObjectModelItemValue{std::string{"Heater"}}}},
+        {"state",ObjectModelItem{ ObjectModelItemValue{0} }},
+        {"timeToNextState", ObjectModelItem{ ObjectModelItemValue{0} }},
+        {"on",ObjectModelItem{ ObjectModelItemValue{false} }},
+        {"delayToOn",ObjectModelItem{ ObjectModelItemValue{0}, &delaySetterFunctor }},
+        {"delayToOff",ObjectModelItem{ ObjectModelItemValue{0}, &delaySetterFunctor }}
     };
 
     firstRun = true;
@@ -108,7 +108,7 @@ bool Heater::watch(unsigned long ts) {
     return ret;
 }
 
-std::vector<ObjectModelItem>& Heater::getObjectModel() {
+ObjectModelItemMap& Heater::getObjectModel() {
     auto ts = millis();
     int om_time_to_next_state = 0;
 
@@ -117,11 +117,11 @@ std::vector<ObjectModelItem>& Heater::getObjectModel() {
     else if (state == DELAY_TO_OFF) om_time_to_next_state = getTimeToOff(ts);
 
     //update OM values
-    omItems[1].value =  static_cast<int>(state);
-    omItems[2].value = om_time_to_next_state;
-    omItems[3].value = state == ON || state == DELAY_TO_OFF;
-    omItems[4].value = static_cast<int>(delay_to_on);
-    omItems[5].value = static_cast<int>(delay_to_off);
+    omItems["state"].value =  static_cast<int>(state);
+    omItems["timeToNextState"].value = om_time_to_next_state;
+    omItems["on"].value = state == ON || state == DELAY_TO_OFF;
+    omItems["delayToOn"].value = static_cast<int>(delay_to_on);
+    omItems["delayToOff"].value = static_cast<int>(delay_to_off);
 
     return omItems;
 }

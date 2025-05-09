@@ -59,7 +59,7 @@ class Heater : public ObjectModel {
         HeaterState getState() { return state; };
         bool watch(unsigned long ts);
 
-        ObjectModelItemList &getObjectModel();
+        ObjectModelItemMap &getObjectModel() override;
         HeaterDelaySetter delaySetterFunctor;
 };
 
