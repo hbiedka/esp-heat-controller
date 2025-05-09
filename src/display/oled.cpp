@@ -94,7 +94,7 @@ int8_t Oled::PrintChar(char c, size_t font_id, uint8_t col, uint8_t page,uint8_t
 
 }
 
-void Oled::PrintStr(const String &s, size_t font_id, uint8_t col, uint8_t page,uint8_t offset) {
+void Oled::PrintStr(const std::string &s, size_t font_id, uint8_t col, uint8_t page,uint8_t offset) {
     
     uint8_t c = col;
     int8_t newc;

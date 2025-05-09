@@ -34,7 +34,7 @@ class TextField {
 
         void SetOled(Oled *_oled) { oled = _oled; }
 
-        void Print(const String &s);
+        void Print(const std::string &s);
         void Clear();
 
 };

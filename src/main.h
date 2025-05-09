@@ -46,9 +46,9 @@ Selftest selftest(outputs,&panel);
 
 Oled oled(OLED_ADDR);
 
-std::vector<String> boolLabels{"Yes","No"};
-std::vector<String> enumLabels{"Alpha","Bravo","Charlie","Delta"};
-std::vector<String> dummyLabels;
+std::vector<std::string> boolLabels{"Yes","No"};
+std::vector<std::string> enumLabels{"Alpha","Bravo","Charlie","Delta"};
+std::vector<std::string> dummyLabels;
 
 bool v1 = false;
 bool v2 = true;

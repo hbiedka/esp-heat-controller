@@ -1,7 +1,7 @@
 #include "oledUi.h"
 
 
-void TextField::Print(const String &s) {
+void TextField::Print(const std::string &s) {
     if (oled == nullptr) return;        //TODO: throw exception
 
     Clear();

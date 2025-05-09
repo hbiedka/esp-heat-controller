@@ -2,6 +2,7 @@
 #define UI_H
 
 #include <Arduino.h>
+#include <string>
 #include "button/buttonGroup.h"
 #include "display/oled.h"
 #include "display/oledUi.h"
@@ -19,10 +20,10 @@ enum MenuItemType {
 };
 
 struct MenuItem {
-    String label;                   // Label
+    std::string label;                   // Label
     MenuItemType type = BOOL;       // type selector
 
-    const std::vector<String> &enumLabels;  // for Bool, alternative labels {"Value if false","Value if true"}
+    const std::vector<std::string> &enumLabels;  // for Bool, alternative labels {"Value if false","Value if true"}
                                             // for Enum, hold enum labels (remember to pass the size in max_value)
                                             // ignored for any other type
 

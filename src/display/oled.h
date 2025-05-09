@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+#include <string>
 
 #define OLED_WID 128
 #define OLED_HEI 8  //8 pages (=64px)
@@ -21,7 +22,7 @@ class Oled {
         void Clear();
 
         int8_t PrintChar(char c, size_t font_id, uint8_t col, uint8_t page,uint8_t offset);
-        void PrintStr(const String &s, size_t font_id, uint8_t col, uint8_t page,uint8_t offset);
+        void PrintStr(const std::string &s, size_t font_id, uint8_t col, uint8_t page,uint8_t offset);
         void ClearStr(uint8_t col,uint8_t page, uint8_t wid);
 };
 

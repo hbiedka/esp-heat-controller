@@ -1,6 +1,6 @@
 #include "menu.h"
 
-std::vector<String> defaultBoolLabels{"Y","N"};
+std::vector<std::string> defaultBoolLabels{"Y","N"};
 
 Menu *currentButtonCbHolder = nullptr;
 
@@ -210,7 +210,7 @@ void Menu::RedrawValueOnPos(unsigned int posToRedraw) {
     MenuGetterReturn ret;
     
     if (item.type == BOOL ) {
-        std::vector<String> &labels = defaultBoolLabels;
+        std::vector<std::string> &labels = defaultBoolLabels;
         if (item.enumLabels.size() >= 2)
             labels = item.enumLabels;
 
@@ -236,7 +236,7 @@ void Menu::RedrawValueOnPos(unsigned int posToRedraw) {
         ret = item.iface.get(val);
 
         if (ret == MenuGetterReturn::OK)
-            ui[uiPosToRedraw][1].Print( String{val} );
+            ui[uiPosToRedraw][1].Print( std::to_string(val) );
     }
 
 }
