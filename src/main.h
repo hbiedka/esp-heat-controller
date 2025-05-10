@@ -40,7 +40,8 @@ ExternalInput in2(PIN_IN2);
 Heater pump1(PIN_PUMP1,in1.getStatePtr());
 Heater pump2(PIN_PUMP2,in2.getStatePtr());
 
-std::vector<Heater*> pumps{&pump1,&pump2};
+std::vector<ObjectModel*> pumps{{&pump1,&pump2}};
+ObjectModelList pump_list{pumps};
 
 Selftest selftest(outputs,&panel);
 

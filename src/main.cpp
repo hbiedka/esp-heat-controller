@@ -5,7 +5,7 @@
 #include "main.h"
 
 const char degC_cstr[] = {127,'C','\0'};
-String degC{degC_cstr};
+std::string degC{degC_cstr};
 
 IntervalOperation sendHtrStatus(3000);
 
@@ -36,7 +36,7 @@ void loop() {
   pump2.Spin(ts);
 
   if (sendHtrStatus.trig()) {
-    Serial.println(pump2.serialize().c_str());
+    Serial.println(pump_list.serialize().c_str());
   }
 
 }

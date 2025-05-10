@@ -47,4 +47,13 @@ class ObjectModel {
         ObjectModelSetterReturn setProperty(const std::string &label, const ObjectModelItemValue &value);
 };
 
+class ObjectModelList : public ObjectModel {
+    public:
+        ObjectModelList(const std::vector<ObjectModel*> &children) {
+            for (size_t i = 0; i < children.size(); i++) {
+                omItems[std::to_string(i)] = ObjectModelItem{children[i]};
+            }
+        }
+};
+
 #endif 
