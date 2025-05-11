@@ -25,6 +25,9 @@ MenuGetterReturn IntMenuValueIface::get(int &ref) const {
 }
 
 MenuSetterReturn IntMenuValueIface::set(int &ref) const {
+    if (floor > ceil)
+        return MenuSetterReturn::SETTER_INVALID;
+
     if (ref < floor)
         return MenuSetterReturn::VAL_TOO_SMALL;
     if (ref >= ceil)

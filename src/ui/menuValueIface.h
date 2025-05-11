@@ -11,6 +11,7 @@ enum class MenuGetterReturn {
 enum class MenuSetterReturn {
     OK = 0,
     SETTER_UNDEF,
+    SETTER_INVALID,
     VAL_UNDEF,
     VAL_READONLY,
     VAL_TOO_BIG,
