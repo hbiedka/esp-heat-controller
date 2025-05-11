@@ -43,19 +43,18 @@ std::string ObjectModel::serialize() {
     return result;
 }
 
-/*
-int ObjectModel::getIndexFromLabel(const std::string &label) {
-    auto it = std::find_if(omItems.begin(), omItems.end(),
-        [label](ObjectModelItem item){
-            return item.label == label;
-        }
-    );
-    if (it == omItems.end())
-        return -1;
+ObjectModelGetterReturn ObjectModel::getProperty(const std::string &label, ObjectModelItemValue &value) {
 
-    return std::distance(omItems.begin(),it);
+    ObjectModelItemMap &om = getObjectModel();
+    //find index
+    auto it = om.find(label);
+    if (it == om.end())
+        //no label like this
+        return ObjectModelGetterReturn::INVLABEL;
+
+    value = it->second.value;
+    return ObjectModelGetterReturn::OK;
 }
-    */
 
 ObjectModelSetterReturn ObjectModel::setProperty(const std::string &label, const ObjectModelItemValue &value) {
 

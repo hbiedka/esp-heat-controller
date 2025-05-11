@@ -8,6 +8,12 @@
 
 class ObjectModel;
 
+enum class ObjectModelGetterReturn {
+    OK = 0,
+    INVLABEL,
+    NOT_IMPLEMENTED
+};
+
 enum class ObjectModelSetterReturn {
     OK = 0,
     INVTYPE,
@@ -29,7 +35,6 @@ class ObjectModelSetter {
 };
 
 struct ObjectModelItem {
-    // std::string label;
     ObjectModelItemValue value;
     ObjectModelSetter *setter = nullptr; // Pointer to setter function for the item
 
@@ -43,7 +48,7 @@ class ObjectModel {
     public:
         virtual ObjectModelItemMap &getObjectModel(){ return omItems; };
         std::string serialize();
-        // int getIndexFromLabel(const std::string &label);
+        ObjectModelGetterReturn getProperty(const std::string &label, ObjectModelItemValue &value);
         ObjectModelSetterReturn setProperty(const std::string &label, const ObjectModelItemValue &value);
 };
 
@@ -53,6 +58,13 @@ class ObjectModelList : public ObjectModel {
             for (size_t i = 0; i < children.size(); i++) {
                 omItems[std::to_string(i)] = ObjectModelItem{children[i]};
             }
+        }
+        ObjectModel* operator[](size_t index) {
+            auto it = omItems.find(std::to_string(index));
+            if (it != omItems.end() && std::holds_alternative<ObjectModel*>(it->second.value)) {
+                return std::get<ObjectModel*>(it->second.value);
+            }
+            return nullptr;
         }
 };
 
