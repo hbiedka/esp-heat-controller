@@ -235,8 +235,11 @@ void Menu::RedrawValueOnPos(unsigned int posToRedraw) {
         int val;
         ret = item.iface.get(val);
 
-        if (ret == MenuGetterReturn::OK)
-            ui[uiPosToRedraw][1].Print( std::to_string(val) );
+        if (ret == MenuGetterReturn::OK) {
+            char buffer[10];
+            snprintf(buffer, sizeof(buffer), item.format.c_str(), val);
+            ui[uiPosToRedraw][1].Print( std::string(buffer) );
+        }
     }
 
 }

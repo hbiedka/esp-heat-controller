@@ -60,10 +60,10 @@ int v5 = 0;
 int v6 = 0;
 
 std::vector<MenuItem> mItems{
-    MenuItem{"H1 delay on", INT, dummyLabels, IntObjectModelIface{&pump1,"delayToOn",0,100}},
-    MenuItem{"H1 delay off", INT, dummyLabels, IntObjectModelIface{&pump1,"delayToOff",0,100}},
-    MenuItem{"H2 delay on", INT, dummyLabels, IntObjectModelIface{&pump2,"delayToOn",0,100}},
-    MenuItem{"H2 delay off", INT, dummyLabels, IntObjectModelIface{&pump2,"delayToOff",0,100}},
+    MenuItem{"H1 delay on", INT, dummyLabels, IntObjectModelIface{&pump1,"delayToOn",0,100}, "%d s"},
+    MenuItem{"H1 delay off", INT, dummyLabels, IntObjectModelIface{&pump1,"delayToOff",0,100}, "%d s"},
+    MenuItem{"H2 delay on", INT, dummyLabels, IntObjectModelIface{&pump2,"delayToOn",0,100}, "%d s"},
+    MenuItem{"H2 delay off", INT, dummyLabels, IntObjectModelIface{&pump2,"delayToOff",0,100}, "%d s"},
     MenuItem{"Bool 1", BOOL, boolLabels, BoolMenuValueIface{v1}},
     MenuItem{"Bool 2", BOOL, boolLabels, BoolMenuValueIface{v2}},
     MenuItem{"Bool 3", BOOL, boolLabels, BoolMenuValueIface{v3}},

@@ -29,6 +29,8 @@ struct MenuItem {
 
     const MenuValueIface &iface;    // interface with get/set methods for int and bool
                                     // and get method for link
+    std::string format = "%d";            // format string for int
+                                    // ignored for any other type
 };
 
 class Menu {
@@ -46,9 +48,9 @@ class Menu {
         Menu *prev = nullptr;
 
         UiBlock menuItem{{
-            TextField(20,0,60,0,0),     //label
+            TextField(12,0,60,0,0),     //label
             TextField(80,0,40,0,4),     //value
-            TextField(2,0,15,1,0),      //pointer
+            TextField(2,0,10,1,0),      //pointer
 
         }};
         Ui ui{{
