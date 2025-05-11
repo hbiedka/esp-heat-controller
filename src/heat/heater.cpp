@@ -34,7 +34,7 @@ void Heater::Spin(unsigned long ts) {
             }
             break;
         case DELAY_TO_ON:
-            if (in && (state_ts + delay_to_on) < ts) {
+            if (in && (state_ts + delay_to_on*1000) < ts) {
                 state = ON;
                 digitalWrite(pin,1);
                 log("Heater: on");
@@ -50,7 +50,7 @@ void Heater::Spin(unsigned long ts) {
             }
             break;
         case DELAY_TO_OFF:
-            if (!in && (state_ts + delay_to_off) < ts) {
+            if (!in && (state_ts + delay_to_off*1000) < ts) {
                 state = OFF;
                 digitalWrite(pin,0);
                 log("Heater: off");
@@ -65,7 +65,7 @@ void Heater::Spin(unsigned long ts) {
 
 unsigned int Heater::getTimeToOn(unsigned long ts) {
     if (state == DELAY_TO_ON) {
-        return (delay_to_on - (ts - state_ts))/1000;
+        return (delay_to_on - (ts - state_ts)/1000);
     } else {
         return 0;
     }
@@ -73,7 +73,7 @@ unsigned int Heater::getTimeToOn(unsigned long ts) {
 
 unsigned int Heater::getTimeToOff(unsigned long ts) {
     if (state == DELAY_TO_OFF) {
-        return (delay_to_off - (ts - state_ts))/1000;
+        return (delay_to_off - (ts - state_ts)/1000);
     } else {
         return 0;
     }
@@ -132,7 +132,7 @@ ObjectModelSetterReturn HeaterDelaySetter::operator()(const std::string &label, 
         return ObjectModelSetterReturn::INVTYPE;
     
     int ival = std::get<int>(value);
-    if (ival < 0 || ival > 1000000)
+    if (ival < 0 || ival > 1000)
         return ObjectModelSetterReturn::INVVAL;
 
     if (label == "delayToOn") {

@@ -36,8 +36,8 @@ class Heater : public ObjectModel {
         HeaterState state = OFF;
 
         unsigned long state_ts = 0;
-        unsigned long delay_to_on = 5000;
-        unsigned long delay_to_off = 5000;
+        unsigned long delay_to_on = 5;
+        unsigned long delay_to_off = 5;
         bool *input = nullptr;
         bool last_input = false;
 
