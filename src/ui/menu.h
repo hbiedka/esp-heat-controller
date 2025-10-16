@@ -1,15 +1,17 @@
-#ifndef UI_H
-#define UI_H
+#ifndef MENU_H
+#define MENU_H
 
 #include <Arduino.h>
 #include <string>
+#include <memory>
 #include "button/buttonGroup.h"
 #include "display/oled.h"
 #include "display/oledUi.h"
 
 #include "menuValueIface.h"
+#include "menuRef.h"
 
-class Menu;
+// class Menu;
 
 enum MenuItemType {
     BOOL = 0,   // yes/no
@@ -27,7 +29,7 @@ struct MenuItem {
                                             // for Enum, hold enum labels (remember to pass the size in max_value)
                                             // ignored for any other type
 
-    const MenuValueIface &iface;    // interface with get/set methods for int and bool
+    std::shared_ptr<const MenuValueIface> iface;    // interface with get/set methods for int and bool
                                     // and get method for link
     std::string format = "%d";            // format string for int
                                     // ignored for any other type

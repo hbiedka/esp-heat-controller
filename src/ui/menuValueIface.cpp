@@ -36,3 +36,10 @@ MenuSetterReturn IntMenuValueIface::set(int &ref) const {
     value = ref;
     return MenuSetterReturn::OK;
 }
+
+MenuGetterReturn LinkMenuValueIface::get(Menu *&ref) const {
+    if (link == nullptr)
+        return MenuGetterReturn::VAL_INVALID;
+    ref = link;
+    return MenuGetterReturn::OK;
+}

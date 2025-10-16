@@ -52,26 +52,31 @@ std::vector<std::string> boolLabels{"Yes","No"};
 std::vector<std::string> enumLabels{"Alpha","Bravo","Charlie","Delta"};
 std::vector<std::string> dummyLabels;
 
-bool v1 = false;
-bool v2 = true;
-bool v3 = true;
-int v4 = 0;
-int v5 = 0;
-int v6 = 0;
 
-std::vector<MenuItem> mItems{
-    MenuItem{"H1 delay on", INT, dummyLabels, IntObjectModelIface{&pump1,"delayToOn",0,100}, "%d s"},
-    MenuItem{"H1 delay off", INT, dummyLabels, IntObjectModelIface{&pump1,"delayToOff",0,100}, "%d s"},
-    MenuItem{"H2 delay on", INT, dummyLabels, IntObjectModelIface{&pump2,"delayToOn",0,100}, "%d s"},
-    MenuItem{"H2 delay off", INT, dummyLabels, IntObjectModelIface{&pump2,"delayToOff",0,100}, "%d s"},
-    MenuItem{"Bool 1", BOOL, boolLabels, BoolMenuValueIface{v1}},
-    MenuItem{"Bool 2", BOOL, boolLabels, BoolMenuValueIface{v2}},
-    MenuItem{"Bool 3", BOOL, boolLabels, BoolMenuValueIface{v3}},
-    MenuItem{"Enum 4", ENUM, enumLabels, IntMenuValueIface{v4,4}},
-    MenuItem{"Enum 5", ENUM, enumLabels, IntMenuValueIface{v5,4}},
-    MenuItem{"Int 6", INT, dummyLabels, IntMenuValueIface{v6,-100,100}},
+
+auto pump1ton = std::make_shared<IntObjectModelIface>(&pump1,"delayToOn",0,100);
+auto pump2ton = std::make_shared<IntObjectModelIface>(&pump2,"delayToOn",0,100);
+auto pump1toff = std::make_shared<IntObjectModelIface>(&pump1,"delayToOff",0,100);
+auto pump2toff = std::make_shared<IntObjectModelIface>(&pump2,"delayToOff",0,100);
+
+
+std::vector<MenuItem> m1Items{
+    MenuItem{"H1 delay on", INT, dummyLabels, pump1ton, "%d s"},
+    MenuItem{"H1 delay off", INT, dummyLabels, pump1toff, "%d s"},
+    MenuItem{"Back",BACK, dummyLabels, std::make_shared<MenuValueIface>()},
 };
+Menu m1(m1Items,&panel,&oled);
 
-Menu m(mItems,&panel,&oled);
+std::vector<MenuItem> m2Items{
+    MenuItem{"H2 delay on", INT, dummyLabels, pump2ton, "%d s"},
+    MenuItem{"H2 delay off", INT, dummyLabels, pump2toff, "%d s"},
+    MenuItem{"Back",BACK, dummyLabels, std::make_shared<MenuValueIface>()},
+};
+Menu m2(m2Items,&panel,&oled);
 
+std::vector<MenuItem> mainMenuItems{
+    MenuItem{"Heater 1", LINK, dummyLabels, std::make_shared<LinkMenuValueIface>(&m1)},
+    MenuItem{"Heater 2", LINK, dummyLabels, std::make_shared<LinkMenuValueIface>(&m2)},
+};
+Menu mainMenu(mainMenuItems,&panel,&oled);
 #endif 

@@ -1,6 +1,8 @@
 #ifndef MENU_VALUE_IFACE_H
 #define MENU_VALUE_IFACE_H
 
+#include "menuRef.h"
+
 enum class MenuGetterReturn {
     OK = 0,
     GETTER_UNDEF,
@@ -29,6 +31,9 @@ class MenuValueIface {
         virtual MenuGetterReturn get(int &ref) const { 
             return MenuGetterReturn::GETTER_UNDEF;
         }
+        virtual MenuGetterReturn get(Menu *&ptr) const { 
+            return MenuGetterReturn::GETTER_UNDEF;
+        }
 
         virtual MenuSetterReturn set(bool &ref) const { 
             return MenuSetterReturn::SETTER_UNDEF;
@@ -49,7 +54,7 @@ class BoolMenuValueIface : public MenuValueIface {
         MenuSetterReturn set(bool &ref) const override;
     };
     
-    class IntMenuValueIface : public MenuValueIface {
+class IntMenuValueIface : public MenuValueIface {
     private:
         int &value;
         int floor;
@@ -60,6 +65,15 @@ class BoolMenuValueIface : public MenuValueIface {
         IntMenuValueIface(int &v, int bottom_limit, int top_limit);
         MenuGetterReturn get(int &ref) const override;
         MenuSetterReturn set(int &ref) const override;
-    };
+};
+
+class LinkMenuValueIface : public MenuValueIface {
+    private:
+        Menu *link;
+    
+    public:
+        LinkMenuValueIface(Menu *ptr) : link(ptr) {}
+        MenuGetterReturn get(Menu *&ref) const override;
+};  
 
 #endif

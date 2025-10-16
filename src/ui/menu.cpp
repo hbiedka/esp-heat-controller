@@ -33,18 +33,18 @@ void Menu::buttonUp() {
 
         if (item.type == ENUM) {
             int val;
-            if (item.iface.get(val) == MenuGetterReturn::OK) {
-                ret = item.iface.set(++val);
+            if (item.iface->get(val) == MenuGetterReturn::OK) {
+                ret = item.iface->set(++val);
                 if (ret == MenuSetterReturn::VAL_TOO_BIG) {
                     val = 0;
-                    ret = item.iface.set(val); 
+                    ret = item.iface->set(val); 
                 }
             }
 
         } else if (item.type == INT) {
             int val;
-            if (item.iface.get(val) == MenuGetterReturn::OK)
-                ret = item.iface.set(++val);
+            if (item.iface->get(val) == MenuGetterReturn::OK)
+                ret = item.iface->set(++val);
         }
         RedrawValueOnPos(pos);
     } else {
@@ -60,22 +60,22 @@ void Menu::buttonDown() {
 
         if (item.type == ENUM) {
             int val;
-            if (item.iface.get(val) == MenuGetterReturn::OK) {
-                ret = item.iface.set(--val);
+            if (item.iface->get(val) == MenuGetterReturn::OK) {
+                ret = item.iface->set(--val);
                 if (ret == MenuSetterReturn::VAL_TOO_SMALL) {
                     // we don't know the max limit, but we can bump the value until it reach
                     // the ceiling
                     val = 0;
                     do {
-                        ret = item.iface.set(++val);
+                        ret = item.iface->set(++val);
                     } while (ret != MenuSetterReturn::VAL_TOO_BIG);
                 }
             }
 
         } else if (item.type == INT) {
             int val;
-            if (item.iface.get(val) == MenuGetterReturn::OK)
-                ret = item.iface.set(--val);
+            if (item.iface->get(val) == MenuGetterReturn::OK)
+                ret = item.iface->set(--val);
 
         }
         RedrawValueOnPos(pos);
@@ -94,14 +94,29 @@ void Menu::buttonEnter() {
     if (item.type == BOOL) {
         //change state
         bool val;
-        if (item.iface.get(val) == MenuGetterReturn::OK) {
+        if (item.iface->get(val) == MenuGetterReturn::OK) {
             val = !val;
-            ret = item.iface.set(val);
+            ret = item.iface->set(val);
         }
 
     } else if (item.type == ENUM || item.type == INT) {
         valueEdit = !valueEdit;
         Redraw(true);
+    } else if (item.type == LINK) {
+        Menu *linkMenu = nullptr;
+        if (item.iface->get(linkMenu) == MenuGetterReturn::OK) {
+            if (linkMenu == nullptr) {
+                return;
+            }
+            linkMenu->Show(this);
+            return;
+        }
+    } else if (item.type == BACK) {
+        //go to previous menu
+        if (prev != nullptr) {
+            prev->Show();
+            return;
+        }
     }
     
     //if link
@@ -193,7 +208,7 @@ void Menu::Redraw(boolean forceRedraw) {
     
     unsigned int ptrPos = pos-scrollPos;
     if (ptrPos < getMenuItemsOnDisplay() ){
-        ui[ptrPos][2].Print(">");
+        ui[ptrPos][2].Print( items[pos].type == BACK ? "<" : ">" );
     }
     //Else throw exception?
 
@@ -215,13 +230,13 @@ void Menu::RedrawValueOnPos(unsigned int posToRedraw) {
             labels = item.enumLabels;
 
         bool val;
-        ret = item.iface.get(val);
+        ret = item.iface->get(val);
 
         if (ret == MenuGetterReturn::OK)
             ui[uiPosToRedraw][1].Print( labels[val ? 1 : 0] );
     } else if (item.type == ENUM && item.enumLabels.size() > 0 ) {
         int val;
-        ret = item.iface.get(val);
+        ret = item.iface->get(val);
         
         //deal with negative values and enum overflow
         //TODO throw exception
@@ -233,7 +248,7 @@ void Menu::RedrawValueOnPos(unsigned int posToRedraw) {
             ui[uiPosToRedraw][1].Print( item.enumLabels[val] );
     } else if (item.type == INT ) {
         int val;
-        ret = item.iface.get(val);
+        ret = item.iface->get(val);
 
         if (ret == MenuGetterReturn::OK) {
             char buffer[10];

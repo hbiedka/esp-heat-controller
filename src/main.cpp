@@ -20,7 +20,7 @@ void setup() {
 
   delay(1000);
 
-  m.Show();
+  mainMenu.Show();
 }
 
 void loop() {
