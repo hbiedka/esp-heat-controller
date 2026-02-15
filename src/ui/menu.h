@@ -8,6 +8,7 @@
 #include "display/oled.h"
 #include "display/oledUi.h"
 
+#include "ui.h"
 #include "menuValueIface.h"
 #include "menuRef.h"
 

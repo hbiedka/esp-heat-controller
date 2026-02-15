@@ -1,4 +1,4 @@
-#include "oledUi.h"
+#include "ui.h"
 
 Ui::Ui(Oled *_oled, const std::vector<UiTemplateEntry> &entries)
     : oled(_oled)

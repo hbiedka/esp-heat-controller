@@ -11,6 +11,7 @@
 #include "display/oledUi.h"
 #include "adapter/ObjectModelToMenu.h"
 
+#include "ui/ui.h"
 #include "ui/menu.h"
 
 
