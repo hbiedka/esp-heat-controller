@@ -2,10 +2,9 @@
 
 std::vector<std::string> defaultBoolLabels{"Y","N"};
 
-Menu::Menu(std::vector<MenuItem> _items,ButtonGroup *_bg, Ui &_ui): 
-    items(_items),
-    bg(_bg),
-    ui(_ui)
+Menu::Menu(Ui &_ui, std::vector<MenuItem> _items): 
+    ui(_ui),
+    items(_items)
 {
     ui.loadTemplate({
         {menuItem,0,0},
@@ -138,10 +137,7 @@ void Menu::ButtonCallback(uint8_t id, bool hold) {
 
 // enter the menu,  refresh display, set button callbacks
 void Menu::Show() {
-    if (bg != nullptr) {
-        //assign this object to buttons to handle all button events ant trigger buttonCallback
-        bg->assignInteractiveObject(this);
-    } 
+    ui.takeoverButtons(this);
     valueEdit = false;
     
     //draw all

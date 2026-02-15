@@ -1,21 +1,15 @@
 #include "ui.h"
 
-Ui::Ui(Oled *_oled, const std::vector<UiTemplateEntry> &entries)
-    : oled(_oled)
+Ui::Ui(Oled *_oled,  ButtonGroup *_bg, const std::vector<UiTemplateEntry> &entries)
+    : oled(_oled),
+    bg(_bg)
 {
     loadTemplate(entries);
 }
 
-Ui::Ui(Oled *_oled)
-    : oled(_oled)
-{}
-
-Ui::Ui(const std::vector<UiTemplateEntry> &entries)
-{
-    loadTemplate(entries);
-}
-
-Ui::Ui()
+Ui::Ui(Oled *_oled, ButtonGroup *_bg)
+    : oled(_oled),
+    bg(_bg)
 {}
 
 void Ui::loadTemplate(const std::vector<UiTemplateEntry> &entries)
@@ -31,4 +25,10 @@ void Ui::Clear()
 {
     if (!oled) return;  //TODO throw exception
     oled->Clear();
+}
+
+void Ui::takeoverButtons(ButtonInteractive* obj)
+{
+    if (!bg) return;    //TODO throw exception
+    bg->assignInteractiveObject(obj);
 }

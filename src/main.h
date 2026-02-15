@@ -48,7 +48,7 @@ ObjectModelList pump_list{pumps};
 Selftest selftest(outputs,&panel);
 
 Oled oled(OLED_ADDR);
-Ui ui(&oled);
+Ui ui(&oled,&panel);
 
 std::vector<std::string> boolLabels{"Yes","No"};
 std::vector<std::string> enumLabels{"Alpha","Bravo","Charlie","Delta"};
@@ -67,18 +67,18 @@ std::vector<MenuItem> m1Items{
     MenuItem{"H1 delay off", INT, dummyLabels, pump1toff, "%d s"},
     MenuItem{"Back",BACK, dummyLabels, std::make_shared<MenuValueIface>()},
 };
-Menu m1(m1Items,&panel,ui);
+Menu m1(ui,m1Items);
 
 std::vector<MenuItem> m2Items{
     MenuItem{"H2 delay on", INT, dummyLabels, pump2ton, "%d s"},
     MenuItem{"H2 delay off", INT, dummyLabels, pump2toff, "%d s"},
     MenuItem{"Back",BACK, dummyLabels, std::make_shared<MenuValueIface>()},
 };
-Menu m2(m2Items,&panel,ui);
+Menu m2(ui, m2Items);
 
 std::vector<MenuItem> mainMenuItems{
     MenuItem{"Heater 1", LINK, dummyLabels, std::make_shared<LinkMenuValueIface>(&m1)},
     MenuItem{"Heater 2", LINK, dummyLabels, std::make_shared<LinkMenuValueIface>(&m2)},
 };
-Menu mainMenu(mainMenuItems,&panel,ui);
+Menu mainMenu(ui,mainMenuItems);
 #endif 

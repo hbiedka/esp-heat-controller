@@ -38,9 +38,8 @@ struct MenuItem {
 
 class Menu : ButtonInteractive {
     private:
+        Ui &ui;
         std::vector<MenuItem> items;
-        ButtonGroup *bg = nullptr;
-        Oled *oled = nullptr;
 
         const unsigned int itemsOnScreen = 4;
 
@@ -55,7 +54,6 @@ class Menu : ButtonInteractive {
             TextField(80,0,40,0,4),     //value
             TextField(2,0,10,1,0),      //pointer
         }};
-        Ui ui;
 
         unsigned int getMenuItemsOnDisplay() { return ui.getBlocksNum(); };
 
@@ -72,7 +70,7 @@ class Menu : ButtonInteractive {
         void RedrawValueOnPos(unsigned int posToRedraw);
 
     public:
-        Menu(std::vector<MenuItem> _items,ButtonGroup *_bg, Ui &_ui);
+        Menu(Ui &_ui, std::vector<MenuItem> _items);
 
         void Show();
         void Show(Menu *_prev);
