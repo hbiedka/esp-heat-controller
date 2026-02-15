@@ -4,9 +4,6 @@
 #include <Arduino.h>
 #include <string>
 #include <memory>
-#include "button/buttonGroup.h"
-#include "display/oled.h"
-#include "display/oledUi.h"
 
 #include "ui.h"
 #include "menuValueIface.h"

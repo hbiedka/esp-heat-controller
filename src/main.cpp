@@ -16,10 +16,14 @@ void setup() {
 
   Serial.begin(9600);
 
+  pump1.setProperty("delayToOn",20);
+  pump1.setProperty("delayToOff",120);
+  pump2.setProperty("delayToOn",20);
+  pump2.setProperty("delayToOff",120);
+  htr.setProperty("delayToOn",1);
+  htr.setProperty("delayToOff",1);
+
   oled.Init();
-
-  delay(1000);
-
   mainMenu.Show();
 }
 
@@ -31,9 +35,11 @@ void loop() {
 
   in1.Spin();
   in2.Spin();
+  combined.Spin();
 
   pump1.Spin(ts);
   pump2.Spin(ts);
+  htr.Spin(ts);
 
   if (sendHtrStatus.trig()) {
     Serial.println(pump_list.serialize().c_str());
