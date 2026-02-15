@@ -102,6 +102,10 @@ void Menu::buttonEnter() {
         if (item.iface->get(val) == MenuGetterReturn::OK) {
             val = !val;
             ret = item.iface->set(val);
+            if (ret != MenuSetterReturn::OK) {
+                //TODO throw exception
+                Serial.printf("ERROR setting %s: %u\n",item.label.c_str(),static_cast<unsigned int>(ret));
+            }
         }
 
     } else if (item.type == ENUM || item.type == INT) {
@@ -124,12 +128,6 @@ void Menu::buttonEnter() {
         }
     }
     
-    //if link
-        //set previous 
-        //go to link
-    //if back
-        //if previous is not null
-            //go to previous
     RedrawValueOnPos(pos);
 
 }

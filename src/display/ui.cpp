@@ -18,13 +18,6 @@ Ui::Ui(const std::vector<UiTemplateEntry> &entries)
 Ui::Ui()
 {}
 
-void Ui::SetOled(Oled *_oled) {
-    oled = _oled;
-    for (size_t i = 0; i < blocks.size(); i++) {
-        blocks[i].SetOled(oled);
-    }
-}
-
 void Ui::loadTemplate(const std::vector<UiTemplateEntry> &entries)
 {
     blocks.clear();

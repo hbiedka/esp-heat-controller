@@ -73,7 +73,6 @@ class Ui {
         Ui(Oled *_oled);
         Ui(const std::vector<UiTemplateEntry> &entries);
         Ui();
-        void SetOled(Oled *_oled);
         void loadTemplate(const std::vector<UiTemplateEntry> &entries);
         void Clear();
         UiBlock &operator[](size_t i) { return blocks[i]; };
