@@ -6,10 +6,9 @@
 #include <memory>
 
 #include "ui.h"
+#include "navigativeScreen.h"
 #include "menuValueIface.h"
 #include "menuRef.h"
-
-// class Menu;
 
 enum MenuItemType {
     BOOL = 0,   // yes/no
@@ -33,7 +32,7 @@ struct MenuItem {
                                     // ignored for any other type
 };
 
-class Menu : ButtonInteractive {
+class Menu : ButtonInteractive, public NavigativeScreen {
     private:
         Ui &ui;
         std::vector<MenuItem> items;
@@ -43,8 +42,6 @@ class Menu : ButtonInteractive {
         unsigned int pos = 0;
         unsigned int scrollPos = 0;
         bool valueEdit = false;
-
-        Menu *prev = nullptr;
 
         UiBlock menuItem{{
             TextField(12,0,60,0,0),     //label
@@ -69,8 +66,7 @@ class Menu : ButtonInteractive {
     public:
         Menu(Ui &_ui, std::vector<MenuItem> _items);
 
-        void Show();
-        void Show(Menu *_prev);
+        void Show() override;
 
         void DrawMenuItem();
         void DrawMenuValue();

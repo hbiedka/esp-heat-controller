@@ -14,12 +14,6 @@ Menu::Menu(Ui &_ui, std::vector<MenuItem> _items):
     });
 }
 
-void Menu::Show(Menu *_prev) {
-    //save previous menu
-    prev = _prev;
-    Show();
-}
-
 //up/down buttons callbacks
 void Menu::buttonUp() {
     if (valueEdit) {
@@ -104,22 +98,16 @@ void Menu::buttonEnter() {
     } else if (item.type == LINK) {
         Menu *linkMenu = nullptr;
         if (item.iface->get(linkMenu) == MenuGetterReturn::OK) {
-            if (linkMenu == nullptr) {
-                return;
-            }
-            linkMenu->Show(this);
+            Jump(linkMenu);
             return;
         }
     } else if (item.type == BACK) {
         //go to previous menu
-        if (prev != nullptr) {
-            prev->Show();
-            return;
-        }
+        JumpBack();
+        return;
     }
     
     RedrawValueOnPos(pos);
-
 }
 
 void Menu::ButtonCallback(uint8_t id, bool hold) {
