@@ -69,9 +69,11 @@ class Ui {
         Oled *oled = nullptr;
 
     public:
-        Ui(Oled *_oled, std::vector<UiTemplateEntry> _entries);
-        Ui(std::vector<UiTemplateEntry> _entries);
+        Ui(Oled *_oled, const std::vector<UiTemplateEntry> &entries);
+        Ui(const std::vector<UiTemplateEntry> &entries);
+        Ui();
         void SetOled(Oled *oled);
+        void loadTemplate(const std::vector<UiTemplateEntry> &entries);
         UiBlock &operator[](size_t i) { return blocks[i]; };
         unsigned int getBlocksNum() { return blocks.size(); };
 };

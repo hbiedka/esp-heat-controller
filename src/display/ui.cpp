@@ -1,23 +1,31 @@
 #include "oledUi.h"
 
-Ui::Ui(Oled *_oled, std::vector<UiTemplateEntry> _entries)
+Ui::Ui(Oled *_oled, const std::vector<UiTemplateEntry> &entries)
     : oled(_oled)
 {
-    for (size_t i = 0; i < _entries.size(); i++) {
-        blocks.push_back(UiBlock(_entries[i].block,_entries[i].x,_entries[i].y));
-    }
+    loadTemplate(entries);
     SetOled(oled);
 }
 
-Ui::Ui(std::vector<UiTemplateEntry> _entries)
+Ui::Ui(const std::vector<UiTemplateEntry> &entries)
 {
-    for (size_t i = 0; i < _entries.size(); i++) {
-        blocks.push_back(UiBlock(_entries[i].block,_entries[i].x,_entries[i].y));
-    }
+    loadTemplate(entries);
+}
+
+Ui::Ui()
+{    
 }
 
 void Ui::SetOled(Oled *oled) {
     for (size_t i = 0; i < blocks.size(); i++) {
         blocks[i].SetOled(oled);
+    }
+}
+
+void Ui::loadTemplate(const std::vector<UiTemplateEntry> &entries)
+{
+    blocks.clear();
+    for (size_t i = 0; i < entries.size(); i++) {
+        blocks.push_back(UiBlock(entries[i].block,entries[i].x,entries[i].y));
     }
 }

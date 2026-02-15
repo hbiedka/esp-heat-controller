@@ -16,6 +16,12 @@ Menu::Menu(std::vector<MenuItem> _items,ButtonGroup *_bg, Oled *_oled):
     bg(_bg),
     oled(_oled)
 {
+    ui.loadTemplate({
+        {menuItem,0,0},
+        {menuItem,0,2},
+        {menuItem,0,4},
+        {menuItem,0,6}
+    });
     ui.SetOled(oled);
 }
 

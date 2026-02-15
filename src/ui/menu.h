@@ -55,12 +55,7 @@ class Menu {
             TextField(2,0,10,1,0),      //pointer
 
         }};
-        Ui ui{{
-            {menuItem,0,0},
-            {menuItem,0,2},
-            {menuItem,0,4},
-            {menuItem,0,6}
-        }};
+        Ui ui;
 
         unsigned int getMenuItemsOnDisplay() { return ui.getBlocksNum(); };
 
