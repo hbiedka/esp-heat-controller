@@ -20,9 +20,9 @@
 
 #define PIN_PUMP1 15
 #define PIN_PUMP2 13
-#define PIN_HEATER 12
+#define PIN_HEATER 16
 
-#define PIN_IN1 16
+#define PIN_IN1 12
 #define PIN_IN2 14
 
 //init buttons
