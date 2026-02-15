@@ -11,10 +11,10 @@ void buttonHoldCbWrapper(uint8_t id){
     if (currentButtonCbHolder != nullptr) currentButtonCbHolder->buttonHoldCb(id);
 }
 
-Menu::Menu(std::vector<MenuItem> _items,ButtonGroup *_bg, Oled *_oled): 
+Menu::Menu(std::vector<MenuItem> _items,ButtonGroup *_bg, Ui &_ui): 
     items(_items),
     bg(_bg),
-    oled(_oled)
+    ui(_ui)
 {
     ui.loadTemplate({
         {menuItem,0,0},
@@ -22,7 +22,6 @@ Menu::Menu(std::vector<MenuItem> _items,ButtonGroup *_bg, Oled *_oled):
         {menuItem,0,4},
         {menuItem,0,6}
     });
-    ui.SetOled(oled);
 }
 
 void Menu::Show(Menu *_prev) {
@@ -189,7 +188,7 @@ void Menu::Redraw(boolean forceRedraw) {
     //if scroled or redraw forced
     if (scrolled || forceRedraw) {
         //redraw all
-        oled->Clear();
+        ui.Clear();
         cleared = true;
 
         unsigned int posWScrollOffset; 

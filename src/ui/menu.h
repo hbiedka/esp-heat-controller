@@ -53,7 +53,6 @@ class Menu {
             TextField(12,0,60,0,0),     //label
             TextField(80,0,40,0,4),     //value
             TextField(2,0,10,1,0),      //pointer
-
         }};
         Ui ui;
 
@@ -76,7 +75,7 @@ class Menu {
         friend void buttonCbWrapper(uint8_t id);
         friend void buttonHoldCbWrapper(uint8_t id);
 
-        Menu(std::vector<MenuItem> _items,ButtonGroup *_bg, Oled *_oled);
+        Menu(std::vector<MenuItem> _items,ButtonGroup *_bg, Ui &_ui);
 
         void Show();
         void Show(Menu *_prev);
