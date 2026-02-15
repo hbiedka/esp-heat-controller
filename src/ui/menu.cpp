@@ -4,11 +4,8 @@ std::vector<std::string> defaultBoolLabels{"Y","N"};
 
 Menu *currentButtonCbHolder = nullptr;
 
-void buttonCbWrapper(uint8_t id) {
-    if (currentButtonCbHolder != nullptr) currentButtonCbHolder->buttonCb(id);
-}
-void buttonHoldCbWrapper(uint8_t id){
-    if (currentButtonCbHolder != nullptr) currentButtonCbHolder->buttonHoldCb(id);
+void buttonCbWrapper(uint8_t id, bool hold) {
+    if (currentButtonCbHolder != nullptr) currentButtonCbHolder->ButtonCallback(id,hold);
 }
 
 Menu::Menu(std::vector<MenuItem> _items,ButtonGroup *_bg, Ui &_ui): 
@@ -151,14 +148,26 @@ void Menu::buttonHoldCb(uint8_t id) {
     }
 }
 
+void Menu::ButtonCallback(uint8_t id, bool hold) {
+
+    Serial.printf("buttonCallback id %u\n",id);
+    switch(id) {
+        case 1: buttonUp(); break;
+        case 3: buttonDown(); break;
+        case 2: 
+            if (!hold) buttonEnter(); 
+            break;
+        default: break;
+    }
+}
+
 
 // enter the menu,  refresh display, set button callbacks
 void Menu::Show() {
     if (bg != nullptr) {
         //set button callbacks
         currentButtonCbHolder = this;
-        bg->setCallbackForAll(buttonCbWrapper);
-        bg->setHoldCallbackForAll(buttonHoldCbWrapper);
+        bg->setUnifiedCallbackForAll(buttonCbWrapper);
     } 
     valueEdit = false;
     

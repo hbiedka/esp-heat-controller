@@ -35,3 +35,18 @@ void ButtonGroup::setHoldCallbackForAll(void (*cb)(uint8_t)) {
         b.setHoldCb(cb);
     }
 }
+
+void ButtonGroup::setUnifiedCallbackForId(uint8_t id, void (*cb)(uint8_t,bool)) {
+    for (auto &b : buttons) {
+        if (b.getId() == id) {
+            b.setCb(cb);
+            break;
+        }
+    }
+}
+
+void ButtonGroup::setUnifiedCallbackForAll(void (*cb)(uint8_t,bool)) {
+    for (auto &b : buttons) {
+        b.setCb(cb);
+    }
+}

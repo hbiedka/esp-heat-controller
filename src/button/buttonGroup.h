@@ -14,6 +14,8 @@ class ButtonGroup {
         void setCallbackForAll(void (*cb)(uint8_t));
         void setHoldCallbackForId(uint8_t id, void (*cb)(uint8_t));
         void setHoldCallbackForAll(void (*cb)(uint8_t));
+        void setUnifiedCallbackForId(uint8_t id, void (*cb)(uint8_t,bool));
+        void setUnifiedCallbackForAll(void (*cb)(uint8_t,bool));
 
         RLadderButton *getButton(uint8_t id) {
             for (auto &b : buttons) {

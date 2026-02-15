@@ -67,14 +67,14 @@ class Menu {
 
         void buttonCb(uint8_t id);
         void buttonHoldCb(uint8_t id);
+        void ButtonCallback(uint8_t id, bool hold);
 
         void Redraw();
         void Redraw(bool forceRedraw);
         void RedrawValueOnPos(unsigned int posToRedraw);
 
     public:
-        friend void buttonCbWrapper(uint8_t id);
-        friend void buttonHoldCbWrapper(uint8_t id);
+        friend void buttonCbWrapper(uint8_t id, bool hold);
 
         Menu(std::vector<MenuItem> _items,ButtonGroup *_bg, Ui &_ui);
 
