@@ -13,6 +13,7 @@
 #include "adapter/ObjectModelToMenu.h"
 
 #include "ui/ui.h"
+#include "ui/mainScreen.h"
 #include "ui/menu.h"
 
 
@@ -89,6 +90,10 @@ std::vector<MenuItem> mainMenuItems{
     MenuItem{"Pump 1", LINK, dummyLabels, std::make_shared<LinkMenuValueIface>(&m1)},
     MenuItem{"Pump 2", LINK, dummyLabels, std::make_shared<LinkMenuValueIface>(&m2)},
     MenuItem{"Heater", LINK, dummyLabels, std::make_shared<LinkMenuValueIface>(&m3)},
+    MenuItem{"Back to main",BACK, dummyLabels, std::make_shared<MenuValueIface>()},
 };
 Menu mainMenu(ui,mainMenuItems);
+
+MainScreen mainScreen(ui,&mainMenu);
+
 #endif 

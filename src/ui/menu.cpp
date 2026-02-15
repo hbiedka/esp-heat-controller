@@ -2,16 +2,23 @@
 
 std::vector<std::string> defaultBoolLabels{"Y","N"};
 
+UiBlock menuItem{{
+    TextField(12,0,60,0,0),     //label
+    TextField(80,0,40,0,4),     //value
+    TextField(2,0,10,1,0),      //pointer
+}};
+
+static const std::vector<UiTemplateEntry> uiTemplate{
+    {menuItem,0,0},
+    {menuItem,0,2},
+    {menuItem,0,4},
+    {menuItem,0,6}
+};
+
 Menu::Menu(Ui &_ui, std::vector<MenuItem> _items): 
     ui(_ui),
     items(_items)
 {
-    ui.loadTemplate({
-        {menuItem,0,0},
-        {menuItem,0,2},
-        {menuItem,0,4},
-        {menuItem,0,6}
-    });
 }
 
 //up/down buttons callbacks
@@ -127,6 +134,8 @@ void Menu::ButtonCallback(uint8_t id, bool hold) {
 void Menu::Show() {
     ui.takeoverButtons(this);
     valueEdit = false;
+
+    ui.loadTemplate(uiTemplate);
     
     //draw all
     Redraw(true);

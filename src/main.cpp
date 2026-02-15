@@ -24,7 +24,7 @@ void setup() {
   htr.setProperty("delayToOff",1);
 
   oled.Init();
-  mainMenu.Show();
+  mainScreen.Show();
 }
 
 void loop() {

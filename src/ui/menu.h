@@ -32,7 +32,7 @@ struct MenuItem {
                                     // ignored for any other type
 };
 
-class Menu : ButtonInteractive, public NavigativeScreen {
+class Menu : public ButtonInteractive, public NavigativeScreen {
     private:
         Ui &ui;
         std::vector<MenuItem> items;
@@ -42,12 +42,6 @@ class Menu : ButtonInteractive, public NavigativeScreen {
         unsigned int pos = 0;
         unsigned int scrollPos = 0;
         bool valueEdit = false;
-
-        UiBlock menuItem{{
-            TextField(12,0,60,0,0),     //label
-            TextField(80,0,40,0,4),     //value
-            TextField(2,0,10,1,0),      //pointer
-        }};
 
         unsigned int getMenuItemsOnDisplay() { return ui.getBlocksNum(); };
 
