@@ -31,6 +31,9 @@ class RLadderButton {
         // Pointer to a void function with one uint8_t argument
         void (*press_cb)(uint8_t) = nullptr;
         void (*hold_cb)(uint8_t) = nullptr;
+        
+        // Pointer to void fcn with uint8_t and bool arguments
+        void (*unified_cb)(uint8_t,bool) = nullptr;
 
     protected:
         void CommitState(bool s);
@@ -53,6 +56,7 @@ class RLadderButton {
 
         void setPressCb(void (*cb)(uint8_t));
         void setHoldCb(void (*cb)(uint8_t));
+        void setCb(void (*cb)(uint8_t,bool));
 };
 
 #endif
