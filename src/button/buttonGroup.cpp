@@ -50,3 +50,9 @@ void ButtonGroup::setUnifiedCallbackForAll(void (*cb)(uint8_t,bool)) {
         b.setCb(cb);
     }
 }
+
+void ButtonGroup::assignInteractiveObject(ButtonInteractive* obj) {
+    for (auto &b : buttons) {
+        b.assignInteractiveObject(obj);
+    }
+}

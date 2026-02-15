@@ -1,7 +1,6 @@
 #include "button.h"
 
 bool RLadderButton::GetState() {
-    //TODO move to cpp file
     if (state == nullptr) return false;
 
     bool pressed = (*state > thr_low && *state < thr_high);
@@ -13,7 +12,6 @@ void RLadderButton::CommitState(bool s) {
 }
 
 void RLadderButton::Spin(unsigned long ts) {
-    //TODO move to cpp file
 
     bool pressed = GetState();
 
@@ -30,6 +28,8 @@ void RLadderButton::Spin(unsigned long ts) {
 
                 if (press_cb != nullptr) press_cb(id);
                 if (unified_cb != nullptr) unified_cb(id,false);
+                if (interactiveObject != nullptr) interactiveObject->ButtonCallback(id,false);
+
                 state_ts = ts;  //reset state_ts to wait to hold
                 
             } else if (!pressed) {
@@ -45,6 +45,7 @@ void RLadderButton::Spin(unsigned long ts) {
 
                     if (hold_cb != nullptr) hold_cb(id);
                     if (unified_cb != nullptr) unified_cb(id,true);
+                    if (interactiveObject != nullptr) interactiveObject->ButtonCallback(id,true);
                 }
             } else {
                 btn_state = RELEASED;
@@ -59,6 +60,7 @@ void RLadderButton::Spin(unsigned long ts) {
                     state_ts = ts;
                     if (hold_cb != nullptr) hold_cb(id);
                     if (unified_cb != nullptr) unified_cb(id,true);
+                    if (interactiveObject != nullptr) interactiveObject->ButtonCallback(id,true);
                 }
             } else {
                 btn_state = RELEASED;
@@ -90,4 +92,8 @@ void RLadderButton::setCb(void (*cb)(uint8_t,bool)) {
     press_cb = nullptr;
     hold_cb = nullptr;
     unified_cb = cb;
+}
+
+void RLadderButton::assignInteractiveObject(ButtonInteractive* obj) {
+    interactiveObject = obj;
 }

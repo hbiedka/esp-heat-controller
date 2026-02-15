@@ -36,7 +36,7 @@ struct MenuItem {
                                     // ignored for any other type
 };
 
-class Menu {
+class Menu : ButtonInteractive {
     private:
         std::vector<MenuItem> items;
         ButtonGroup *bg = nullptr;
@@ -65,17 +65,13 @@ class Menu {
         void buttonDown();
         void buttonEnter();
 
-        void buttonCb(uint8_t id);
-        void buttonHoldCb(uint8_t id);
-        void ButtonCallback(uint8_t id, bool hold);
+        void ButtonCallback(uint8_t id, bool hold) override;
 
         void Redraw();
         void Redraw(bool forceRedraw);
         void RedrawValueOnPos(unsigned int posToRedraw);
 
     public:
-        friend void buttonCbWrapper(uint8_t id, bool hold);
-
         Menu(std::vector<MenuItem> _items,ButtonGroup *_bg, Ui &_ui);
 
         void Show();

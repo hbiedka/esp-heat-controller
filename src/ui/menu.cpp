@@ -2,12 +2,6 @@
 
 std::vector<std::string> defaultBoolLabels{"Y","N"};
 
-Menu *currentButtonCbHolder = nullptr;
-
-void buttonCbWrapper(uint8_t id, bool hold) {
-    if (currentButtonCbHolder != nullptr) currentButtonCbHolder->ButtonCallback(id,hold);
-}
-
 Menu::Menu(std::vector<MenuItem> _items,ButtonGroup *_bg, Ui &_ui): 
     items(_items),
     bg(_bg),
@@ -129,25 +123,6 @@ void Menu::buttonEnter() {
 
 }
 
-void Menu::buttonCb(uint8_t id) {
-    // Serial.printf("buttonCb id %u\n",id);
-    switch(id) {
-        case 1: buttonUp(); break;
-        case 2: buttonEnter(); break;
-        case 3: buttonDown(); break;
-        default: break;
-    }
-}
-
-void Menu::buttonHoldCb(uint8_t id) {
-    //enter button does not provide on-hold action
-    switch(id) {
-        case 1: buttonUp(); break;
-        case 3: buttonDown(); break;
-        default: break;
-    }
-}
-
 void Menu::ButtonCallback(uint8_t id, bool hold) {
 
     Serial.printf("buttonCallback id %u\n",id);
@@ -161,13 +136,11 @@ void Menu::ButtonCallback(uint8_t id, bool hold) {
     }
 }
 
-
 // enter the menu,  refresh display, set button callbacks
 void Menu::Show() {
     if (bg != nullptr) {
-        //set button callbacks
-        currentButtonCbHolder = this;
-        bg->setUnifiedCallbackForAll(buttonCbWrapper);
+        //assign this object to buttons to handle all button events ant trigger buttonCallback
+        bg->assignInteractiveObject(this);
     } 
     valueEdit = false;
     

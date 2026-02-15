@@ -11,6 +11,13 @@ enum BtnState {
     UNDEFINED   //used by getPanelState to indicate that button with given id was not found
 };
 
+class ButtonInteractive
+{
+public:
+    virtual ~ButtonInteractive() = default;
+    virtual void ButtonCallback(uint8_t id, bool hold) = 0;
+};
+
 class RLadderButton {
     private:
         uint8_t id = 0;
@@ -35,6 +42,9 @@ class RLadderButton {
         // Pointer to void fcn with uint8_t and bool arguments
         void (*unified_cb)(uint8_t,bool) = nullptr;
 
+        // Ptr to object which proviedes button callback
+        ButtonInteractive* interactiveObject = nullptr;
+
     protected:
         void CommitState(bool s);
     public:
@@ -57,6 +67,7 @@ class RLadderButton {
         void setPressCb(void (*cb)(uint8_t));
         void setHoldCb(void (*cb)(uint8_t));
         void setCb(void (*cb)(uint8_t,bool));
+        void assignInteractiveObject(ButtonInteractive* obj);
 };
 
 #endif
