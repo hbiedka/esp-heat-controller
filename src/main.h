@@ -43,11 +43,11 @@ ExternalInput in1(PIN_IN1);
 ExternalInput in2(PIN_IN2);
 LogicInput combined(LogicInputOperation::OR,{&in1,&in2});
 
-Heater pump1(PIN_PUMP1,in1.getStatePtr());
-Heater pump2(PIN_PUMP2,in2.getStatePtr());
-Heater htr(PIN_HEATER,combined.getStatePtr());
+Heater pump1(PIN_PUMP1,in1.getStatePtr(),"Pump 1");
+Heater pump2(PIN_PUMP2,in2.getStatePtr(),"Pump 2");
+Heater htr(PIN_HEATER,combined.getStatePtr(),"Heater");
 
-std::vector<ObjectModel*> pumps{{&pump1,&pump2}};
+std::vector<ObjectModel*> pumps{{&pump1,&pump2,&htr}};
 ObjectModelList pump_list{pumps};
 
 Selftest selftest(outputs,&panel);

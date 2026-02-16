@@ -47,7 +47,7 @@ class Heater : public ObjectModel {
     
         HeaterData h_data = {OFF,0};
 
-        Heater(uint8_t _pin, bool *input);
+        Heater(uint8_t _pin, bool *input, std::string name);
         void setInput(bool *_input) { input = _input; };
         void setLogCb(void (*cb)(String)) { log_cb = cb; };
         void Spin(unsigned long ts);
@@ -57,7 +57,6 @@ class Heater : public ObjectModel {
         unsigned int getTimeToOn(unsigned long ts);
         unsigned int getTimeToOff(unsigned long ts);
         HeaterState getState() { return state; };
-        bool watch(unsigned long ts);
 
         ObjectModelItemMap &getObjectModel() override;
         HeaterDelaySetter delaySetterFunctor;

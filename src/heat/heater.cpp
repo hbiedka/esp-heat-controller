@@ -1,6 +1,6 @@
 #include "heater.h"
 
-Heater::Heater(uint8_t _pin, bool *_input) :
+Heater::Heater(uint8_t _pin, bool *_input, std::string name) :
     delaySetterFunctor(*this)
 {
     pin = _pin;
@@ -9,7 +9,7 @@ Heater::Heater(uint8_t _pin, bool *_input) :
     digitalWrite(pin,0);
 
     omItems = {
-        {"name", ObjectModelItem{ ObjectModelItemValue{std::string{"Heater"}}}},
+        {"name", ObjectModelItem{ ObjectModelItemValue{name}}},
         {"state",ObjectModelItem{ ObjectModelItemValue{0} }},
         {"timeToNextState", ObjectModelItem{ ObjectModelItemValue{0} }},
         {"on",ObjectModelItem{ ObjectModelItemValue{false} }},
@@ -77,35 +77,6 @@ unsigned int Heater::getTimeToOff(unsigned long ts) {
     } else {
         return 0;
     }
-}
-
-//to be deprecated and replaced by ObjectModel/ some triggers?
-bool Heater::watch(unsigned long ts) {
-    bool ret = false;
-    unsigned int t_to = 0;
-
-    if (firstRun) {
-        firstRun = false;
-        ret = true;   
-    }
-
-    //check times
-    if (state == DELAY_TO_ON) t_to = getTimeToOn(ts);
-    else if (state == DELAY_TO_OFF) t_to = getTimeToOff(ts);
-
-    if (state != h_data.state) {
-        //new state
-        ret = true;
-    } else if (state == DELAY_TO_ON || state == DELAY_TO_OFF) {
-        if (t_to != h_data.timeTo) ret = true;
-    }
-
-    if (ret) {
-        h_data.state = state;
-        h_data.timeTo = t_to;
-    }
-
-    return ret;
 }
 
 ObjectModelItemMap& Heater::getObjectModel() {
