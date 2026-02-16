@@ -66,6 +66,54 @@ ObjectModelGetterReturn ObjectModel::getProperty(const std::string &label, Objec
     return ObjectModelGetterReturn::OK;
 }
 
+ObjectModelGetterReturn ObjectModel::getBool(const std::string &label, bool &value)
+{
+    ObjectModelItemValue propValue;
+    ObjectModelGetterReturn ret;
+    
+    ret = getProperty(label,propValue);
+    if (ret != ObjectModelGetterReturn::OK)
+        return ret;
+
+    if (!std::holds_alternative<bool>(propValue))
+        return ObjectModelGetterReturn::INVTYPE;
+    
+    value = std::get<bool>(propValue);
+    return ObjectModelGetterReturn::OK;
+}
+
+ObjectModelGetterReturn ObjectModel::getInt(const std::string &label, int &value)
+{
+    ObjectModelItemValue propValue;
+    ObjectModelGetterReturn ret;
+    
+    ret = getProperty(label,propValue);
+    if (ret != ObjectModelGetterReturn::OK)
+        return ret;
+
+    if (!std::holds_alternative<int>(propValue))
+        return ObjectModelGetterReturn::INVTYPE;
+    
+    value = std::get<int>(propValue);
+    return ObjectModelGetterReturn::OK;
+}
+
+ObjectModelGetterReturn ObjectModel::getString(const std::string &label, std::string &value)
+{
+    ObjectModelItemValue propValue;
+    ObjectModelGetterReturn ret;
+    
+    ret = getProperty(label,propValue);
+    if (ret != ObjectModelGetterReturn::OK)
+        return ret;
+
+    if (!std::holds_alternative<std::string>(propValue))
+        return ObjectModelGetterReturn::INVTYPE;
+    
+    value = std::get<std::string>(propValue);
+    return ObjectModelGetterReturn::OK;
+}
+
 ObjectModelSetterReturn ObjectModel::setProperty(const std::string &label, const ObjectModelItemValue &value) {
 
     //find index

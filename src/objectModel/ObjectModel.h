@@ -27,6 +27,10 @@ class ObjectModel {
         std::string serialize();
         ObjectModelGetterReturn getProperty(const std::string &label, ObjectModelItemValue &value);
         ObjectModelSetterReturn setProperty(const std::string &label, const ObjectModelItemValue &value);
+
+        ObjectModelGetterReturn getBool(const std::string &label, bool &value);
+        ObjectModelGetterReturn getInt(const std::string &label, int &value);
+        ObjectModelGetterReturn getString(const std::string &label, std::string &value);
 };
 
 class ObjectModelList : public ObjectModel {

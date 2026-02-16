@@ -12,6 +12,7 @@ class ObjectModelWatcher;
 enum class ObjectModelGetterReturn {
     OK = 0,
     INVLABEL,
+    INVTYPE,
     NOT_IMPLEMENTED
 };
 
