@@ -69,3 +69,17 @@ ObjectModelSetterReturn ObjectModel::setProperty(const std::string &label, const
 
     return (*it->second.setter)(label,value);
 }
+
+void ObjectModel::updateLocalProperty(const std::string &label, const ObjectModelItemValue &value)
+{
+    //find index
+    auto it = omItems.find(label);
+    if (it == omItems.end()) {
+        //no label like this
+        //TODO throw exception
+        return;
+    }
+
+    //TODO check previous value, if changed, trigger watcher
+    it->second.value = value;
+}

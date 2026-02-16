@@ -24,6 +24,8 @@ void Heater::Spin(unsigned long ts) {
     if (input == nullptr) return;
 
     bool in = *input;
+    int time_to_next_state_ms = 0;
+    int time_to_next_state = 0;
 
     switch(state) {
         case OFF:
@@ -34,7 +36,8 @@ void Heater::Spin(unsigned long ts) {
             }
             break;
         case DELAY_TO_ON:
-            if (in && (state_ts + delay_to_on*1000) < ts) {
+            time_to_next_state_ms = state_ts + delay_to_on*1000 - ts;
+            if (in && time_to_next_state_ms <= 0) {
                 state = ON;
                 digitalWrite(pin,1);
                 log("Heater: on");
@@ -50,7 +53,8 @@ void Heater::Spin(unsigned long ts) {
             }
             break;
         case DELAY_TO_OFF:
-            if (!in && (state_ts + delay_to_off*1000) < ts) {
+        time_to_next_state_ms = state_ts + delay_to_off*1000 - ts;
+            if (!in && time_to_next_state_ms <= 0) {
                 state = OFF;
                 digitalWrite(pin,0);
                 log("Heater: off");
@@ -61,40 +65,15 @@ void Heater::Spin(unsigned long ts) {
     }
 
     last_input = in;
-}
 
-unsigned int Heater::getTimeToOn(unsigned long ts) {
-    if (state == DELAY_TO_ON) {
-        return (delay_to_on - (ts - state_ts)/1000);
-    } else {
-        return 0;
-    }
-}
+    time_to_next_state = time_to_next_state_ms / 1000;
 
-unsigned int Heater::getTimeToOff(unsigned long ts) {
-    if (state == DELAY_TO_OFF) {
-        return (delay_to_off - (ts - state_ts)/1000);
-    } else {
-        return 0;
-    }
-}
-
-ObjectModelItemMap& Heater::getObjectModel() {
-    auto ts = millis();
-    int om_time_to_next_state = 0;
-
-    //calculate cache OM variables
-    if (state == DELAY_TO_ON) om_time_to_next_state = getTimeToOn(ts);
-    else if (state == DELAY_TO_OFF) om_time_to_next_state = getTimeToOff(ts);
-
-    //update OM values
-    omItems["state"].value =  static_cast<int>(state);
-    omItems["timeToNextState"].value = om_time_to_next_state;
-    omItems["on"].value = state == ON || state == DELAY_TO_OFF;
-    omItems["delayToOn"].value = static_cast<int>(delay_to_on);
-    omItems["delayToOff"].value = static_cast<int>(delay_to_off);
-
-    return omItems;
+    //update Object Model
+    updateLocalProperty("state",static_cast<int>(state));
+    updateLocalProperty("timeToNextState",time_to_next_state);
+    updateLocalProperty("on",state == ON || state == DELAY_TO_OFF);
+    updateLocalProperty("delayToOn",static_cast<int>(delay_to_on));
+    updateLocalProperty("delayToOff",static_cast<int>(delay_to_off));
 }
 
 ObjectModelSetterReturn HeaterDelaySetter::operator()(const std::string &label, const ObjectModelItemValue &value)

@@ -54,11 +54,8 @@ class Heater : public ObjectModel {
 
         void log(String msg) { if (log_cb != nullptr) log_cb(msg); }
 
-        unsigned int getTimeToOn(unsigned long ts);
-        unsigned int getTimeToOff(unsigned long ts);
         HeaterState getState() { return state; };
 
-        ObjectModelItemMap &getObjectModel() override;
         HeaterDelaySetter delaySetterFunctor;
 };
 

@@ -45,6 +45,7 @@ using ObjectModelItemMap = std::map<std::string, ObjectModelItem>;
 class ObjectModel {
     protected:
         ObjectModelItemMap omItems;
+        void updateLocalProperty(const std::string &label, const ObjectModelItemValue &value);
     public:
         virtual ObjectModelItemMap &getObjectModel(){ return omItems; };
         std::string serialize();
