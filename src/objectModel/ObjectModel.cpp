@@ -1,5 +1,22 @@
 #include "ObjectModel.h"
 
+std::string serializeValue(const ObjectModelItemValue &value) {
+    if (std::holds_alternative<bool>(value)) {
+        return std::get<bool>(value) ? "true" : "false";
+    }
+    if (std::holds_alternative<int>(value)) {
+        return std::to_string(std::get<int>(value));
+    } 
+    if (std::holds_alternative<std::string>(value)) {
+        // Assuming std::string is a class with a method to get the C-string representation
+        return "\"" + std::get<std::string>(value) + "\""; // Uncomment if std::string has a method to get C-string
+    }
+
+    return "<unknown>";
+
+}
+
+
 std::string ObjectModel::serialize() {
     ObjectModelItemMap &om = getObjectModel();
 
@@ -21,21 +38,14 @@ std::string ObjectModel::serialize() {
         result += "\"" + label + "\":";
         
         // Add value based on type
-        if (std::holds_alternative<bool>(item.value)) {
-            result += std::get<bool>(item.value) ? "true" : "false";
-        } else if (std::holds_alternative<int>(item.value)) {
-            result += std::to_string(std::get<int>(item.value));
-        } else if (std::holds_alternative<std::string>(item.value)) {
-            // Assuming std::string is a class with a method to get the C-string representation
-            result += "\"" + std::get<std::string>(item.value) + "\""; // Uncomment if std::string has a method to get C-string
-        } else if (std::holds_alternative<ObjectModel*>(item.value)) {
+        if (std::holds_alternative<ObjectModel*>(item.value)) {
             ObjectModel *linked_ob = std::get<ObjectModel*>(item.value);
             if (linked_ob != nullptr)
                 result += linked_ob->serialize();
             else
                 result += "{}";
         } else {
-            result += "null";
+            result += serializeValue(item.value);
         }
     }
     
@@ -80,6 +90,15 @@ void ObjectModel::updateLocalProperty(const std::string &label, const ObjectMode
         return;
     }
 
-    //TODO check previous value, if changed, trigger watcher
-    it->second.value = value;
+    if (it->second.value != value) {
+        //update value
+        it->second.value = value;
+
+        //look for watchers
+        for (auto watcher : watchers) {
+            if (watcher.property == it->first && watcher.object) {
+                watcher.object->WatchCallback(watcher.id,it->second);
+            }
+        }
+    }
 }

@@ -1,52 +1,28 @@
 #ifndef OBJECT_MODEL_H
 #define OBJECT_MODEL_H
 
-#include <Arduino.h>
-#include <variant>
-#include <string>
-#include <map>
+#include "ObjectModelCommon.h"
+#include "ObjectModelWatcher.h"
 
-class ObjectModel;
-
-enum class ObjectModelGetterReturn {
-    OK = 0,
-    INVLABEL,
-    NOT_IMPLEMENTED
-};
-
-enum class ObjectModelSetterReturn {
-    OK = 0,
-    INVTYPE,
-    INVVAL,
-    INVLABEL,
-    INVFUNC,
-    READONLY,
-    NOT_IMPLEMENTED
-};
-
-using ObjectModelItemValue = std::variant<int, bool, std::string, ObjectModel* >;
-
-class ObjectModelSetter {
-    public:
-        virtual ObjectModelSetterReturn operator()(const std::string &label, const ObjectModelItemValue &value) {
-            return ObjectModelSetterReturn::NOT_IMPLEMENTED;
-        }
-        virtual ~ObjectModelSetter() = default;
-};
-
-struct ObjectModelItem {
-    ObjectModelItemValue value;
-    ObjectModelSetter *setter = nullptr; // Pointer to setter function for the item
-
-};
-
-using ObjectModelItemMap = std::map<std::string, ObjectModelItem>;
+using WatcherMap = std::vector<ObjectModelWatcherItem>;
 
 class ObjectModel {
+    private:
+        WatcherMap watchers;
+
+        void AddWatcher(const std::string &id, const std::string &property, ObjectModelWatcher *watcher) {
+            watchers.push_back({id,property,watcher});
+        };
+        void RemoveWatcher(std::string &property, ObjectModelWatcher *watcher) {
+            //TODO
+        };
+        
     protected:
         ObjectModelItemMap omItems;
         void updateLocalProperty(const std::string &label, const ObjectModelItemValue &value);
     public:
+        friend class ObjectModelWatcher;
+
         virtual ObjectModelItemMap &getObjectModel(){ return omItems; };
         std::string serialize();
         ObjectModelGetterReturn getProperty(const std::string &label, ObjectModelItemValue &value);

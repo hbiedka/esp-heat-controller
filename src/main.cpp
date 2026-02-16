@@ -7,8 +7,6 @@
 const char degC_cstr[] = {127,'C','\0'};
 std::string degC{degC_cstr};
 
-IntervalOperation sendHtrStatus(3000);
-
 void setup() {
 
   pinMode(PIN_LED_STATUS,OUTPUT);
@@ -16,12 +14,19 @@ void setup() {
 
   Serial.begin(9600);
 
-  pump1.setProperty("delayToOn",20);
-  pump1.setProperty("delayToOff",120);
-  pump2.setProperty("delayToOn",20);
-  pump2.setProperty("delayToOff",120);
-  htr.setProperty("delayToOn",1);
-  htr.setProperty("delayToOff",1);
+  pump1.setProperty("delayToOn",10);
+  pump1.setProperty("delayToOff",10);
+  pump2.setProperty("delayToOn",10);
+  pump2.setProperty("delayToOff",10);
+  htr.setProperty("delayToOn",3);
+  htr.setProperty("delayToOff",3);
+
+  watcher.Watch(&pump1,"state","pump1/on");
+  watcher.Watch(&pump2,"state","pump2/on");
+  watcher.Watch(&htr,"state","heater/on");
+  watcher.Watch(&pump1,"timeToNextState","pump1/timeToNextState");
+  watcher.Watch(&pump2,"timeToNextState","pump2/timeToNextState");
+  watcher.Watch(&htr,"timeToNextState","heater/timeToNextState");
 
   oled.Init();
   mainScreen.Show();
@@ -40,10 +45,6 @@ void loop() {
   pump1.Spin(ts);
   pump2.Spin(ts);
   htr.Spin(ts);
-
-  if (sendHtrStatus.trig()) {
-    Serial.println(pump_list.serialize().c_str());
-  }
 
 }
 

@@ -11,6 +11,8 @@
 #include "display/oled.h"
 #include "display/oledUi.h"
 #include "adapter/ObjectModelToMenu.h"
+#include "objectModel/ObjectModel.h"
+#include "objectModel/ObjectModelWatcher.h"
 
 #include "ui/ui.h"
 #include "ui/mainScreen.h"
@@ -95,5 +97,7 @@ std::vector<MenuItem> mainMenuItems{
 Menu mainMenu(ui,mainMenuItems);
 
 MainScreen mainScreen(ui,&mainMenu);
+
+DebugObjectModelWatcher watcher;
 
 #endif 
