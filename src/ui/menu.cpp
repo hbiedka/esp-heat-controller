@@ -109,6 +109,9 @@ void Menu::buttonEnter() {
             return;
         }
     } else if (item.type == BACK) {
+        //set pointer at first position before exit
+        pos = 0;
+
         //go to previous menu
         JumpBack();
         return;
