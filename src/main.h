@@ -96,8 +96,6 @@ std::vector<MenuItem> mainMenuItems{
 };
 Menu mainMenu(ui,mainMenuItems);
 
-MainScreen mainScreen(ui,&mainMenu);
-
-DebugObjectModelWatcher watcher;
+MainScreen mainScreen(ui,&mainMenu,&pump1,&pump2,&htr);
 
 #endif 
