@@ -144,8 +144,8 @@ void ObjectModel::updateLocalProperty(const std::string &label, const ObjectMode
 
         //look for watchers
         for (auto watcher : watchers) {
-            if (watcher.property == it->first && watcher.object) {
-                watcher.object->WatchCallback(watcher.id,it->second);
+            if (watcher.property == it->first && watcher.functor) {
+                (*watcher.functor)(watcher.property,it->second);
             }
         }
     }

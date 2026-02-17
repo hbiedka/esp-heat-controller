@@ -5,21 +5,22 @@
 #include "ObjectModelCommon.h"
 
 struct ObjectModelWatcherItem {
-    std::string id;
     std::string property;
-    ObjectModelWatcher *object = nullptr;
+    ObjectModelWatcher *functor = nullptr;
 };
 
 class ObjectModelWatcher {
     public:
         virtual ~ObjectModelWatcher() = default;
-        virtual void Watch(ObjectModel *om, const std::string &property, const std::string &id);
-        virtual void WatchCallback(const std::string &id, const ObjectModelItem &item) = 0;
+        virtual void operator()(const std::string &property, const ObjectModelItem &item) = 0;
 };
 
 class DebugObjectModelWatcher : public ObjectModelWatcher {
+    private:
+        std::string label;
     public:
-        void WatchCallback(const std::string &id, const ObjectModelItem &item);
+        DebugObjectModelWatcher(const std::string &_label);
+        void operator()(const std::string &property, const ObjectModelItem &item);
 };
 
 #endif

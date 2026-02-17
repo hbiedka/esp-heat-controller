@@ -1,11 +1,14 @@
 #include <stdlib.h>
 
 #include "util/interval.h"
-#include "objectModel/ObjectModel.h"
 #include "main.h"
 
 const char degC_cstr[] = {127,'C','\0'};
 std::string degC{degC_cstr};
+
+DebugObjectModelWatcher serialP1Watcher("p1");
+DebugObjectModelWatcher serialP2Watcher("p2");
+DebugObjectModelWatcher serialHtrWatcher("htr");
 
 void setup() {
 
@@ -21,12 +24,12 @@ void setup() {
   htr.setProperty("delayToOn",3);
   htr.setProperty("delayToOff",3);
 
-  watcher.Watch(&pump1,"state","pump1/on");
-  watcher.Watch(&pump2,"state","pump2/on");
-  watcher.Watch(&htr,"state","heater/on");
-  watcher.Watch(&pump1,"timeToNextState","pump1/timeToNextState");
-  watcher.Watch(&pump2,"timeToNextState","pump2/timeToNextState");
-  watcher.Watch(&htr,"timeToNextState","heater/timeToNextState");
+  pump1.AddWatcher("state",&serialP1Watcher);
+  pump2.AddWatcher("state",&serialP2Watcher);
+  htr.AddWatcher("state",&serialHtrWatcher);
+  pump1.AddWatcher("timeToNextState",&serialP1Watcher);
+  pump2.AddWatcher("timeToNextState",&serialP2Watcher);
+  htr.AddWatcher("timeToNextState",&serialHtrWatcher);
 
   oled.Init();
   mainScreen.Show();

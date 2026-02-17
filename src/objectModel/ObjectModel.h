@@ -9,20 +9,11 @@ using WatcherMap = std::vector<ObjectModelWatcherItem>;
 class ObjectModel {
     private:
         WatcherMap watchers;
-
-        void AddWatcher(const std::string &id, const std::string &property, ObjectModelWatcher *watcher) {
-            watchers.push_back({id,property,watcher});
-        };
-        void RemoveWatcher(std::string &property, ObjectModelWatcher *watcher) {
-            //TODO
-        };
         
     protected:
         ObjectModelItemMap omItems;
         void updateLocalProperty(const std::string &label, const ObjectModelItemValue &value);
     public:
-        friend class ObjectModelWatcher;
-
         virtual ObjectModelItemMap &getObjectModel(){ return omItems; };
         std::string serialize();
         ObjectModelGetterReturn getProperty(const std::string &label, ObjectModelItemValue &value);
@@ -31,6 +22,14 @@ class ObjectModel {
         ObjectModelGetterReturn getBool(const std::string &label, bool &value);
         ObjectModelGetterReturn getInt(const std::string &label, int &value);
         ObjectModelGetterReturn getString(const std::string &label, std::string &value);
+
+        void AddWatcher(const std::string &property, ObjectModelWatcher *watcher) {
+            watchers.push_back({property,watcher});
+        };
+        void RemoveWatcher(std::string &property, ObjectModelWatcher &watcher) {
+            //TODO
+        };
+
 };
 
 class ObjectModelList : public ObjectModel {
