@@ -30,6 +30,36 @@ struct MenuItem {
                                     // and get method for link
     std::string format = "%d";            // format string for int
                                     // ignored for any other type
+
+    MenuItem(const std::string &label, MenuItemType type,
+             const std::vector<std::string> &enumLabels,
+             std::shared_ptr<const MenuValueIface> iface,
+             const std::string &format)
+        : label(label), type(type), enumLabels(enumLabels), iface(std::move(iface)), format(format) {}
+
+    MenuItem(const std::string &label, MenuItemType type,
+             const std::vector<std::string> &enumLabels,
+             std::shared_ptr<const MenuValueIface> iface)
+        : label(label), type(type), enumLabels(enumLabels), iface(std::move(iface)) {}
+
+    MenuItem(const std::string &label, MenuItemType type,
+             std::shared_ptr<const MenuValueIface> iface,
+             const std::string &format)
+        : label(label), type(type), enumLabels(std::vector<std::string>()), iface(std::move(iface)), format(format) {}
+
+    MenuItem(const std::string &label, MenuItemType type,
+             std::shared_ptr<const MenuValueIface> iface)
+        : label(label), type(type), enumLabels(std::vector<std::string>()), iface(std::move(iface)) {}
+
+    MenuItem(const std::string &label, MenuItemType type)
+        : label(label), type(type), enumLabels(std::vector<std::string>())
+        {
+            //only BACK can skip an iface
+            if (type == BACK) {
+                iface = std::make_shared<MenuValueIface>();
+            }
+            //else TODO throw exception
+        }
 };
 
 class Menu : public ButtonInteractive, public NavigativeScreen {

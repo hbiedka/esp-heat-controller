@@ -57,8 +57,6 @@ Selftest selftest(outputs,&panel);
 Oled oled(OLED_ADDR);
 Ui ui(&oled,&panel);
 
-std::vector<std::string> dummyLabels;
-
 auto pump1ton = std::make_shared<IntObjectModelIface>(&pump1,"delayToOn",0,100);
 auto pump2ton = std::make_shared<IntObjectModelIface>(&pump2,"delayToOn",0,100);
 auto htrton = std::make_shared<IntObjectModelIface>(&htr,"delayToOn",0,100);
@@ -68,31 +66,31 @@ auto htrtoff = std::make_shared<IntObjectModelIface>(&htr,"delayToOff",0,100);
 
 
 std::vector<MenuItem> m1Items{
-    MenuItem{"P1 delay on", INT, dummyLabels, pump1ton, "%d s"},
-    MenuItem{"P1 delay off", INT, dummyLabels, pump1toff, "%d s"},
-    MenuItem{"Back",BACK, dummyLabels, std::make_shared<MenuValueIface>()},
+    MenuItem{"P1 delay on", INT, pump1ton, "%d s"},
+    MenuItem{"P1 delay off", INT, pump1toff, "%d s"},
+    MenuItem{"Back",BACK},
 };
 Menu m1(ui,m1Items);
 
 std::vector<MenuItem> m2Items{
-    MenuItem{"P2 delay on", INT, dummyLabels, pump2ton, "%d s"},
-    MenuItem{"P2 delay off", INT, dummyLabels, pump2toff, "%d s"},
-    MenuItem{"Back",BACK, dummyLabels, std::make_shared<MenuValueIface>()},
+    MenuItem{"P2 delay on", INT, pump2ton, "%d s"},
+    MenuItem{"P2 delay off", INT, pump2toff, "%d s"},
+    MenuItem{"Back",BACK},
 };
 Menu m2(ui, m2Items);
 
 std::vector<MenuItem> m3Items{
-    MenuItem{"Htr delay on", INT, dummyLabels, htrton, "%d s"},
-    MenuItem{"Htr delay off", INT, dummyLabels, htrtoff, "%d s"},
-    MenuItem{"Back",BACK, dummyLabels, std::make_shared<MenuValueIface>()},
+    MenuItem{"Htr delay on", INT, htrton, "%d s"},
+    MenuItem{"Htr delay off", INT, htrtoff, "%d s"},
+    MenuItem{"Back",BACK},
 };
 Menu m3(ui, m3Items);
 
 std::vector<MenuItem> mainMenuItems{
-    MenuItem{"Pump 1", LINK, dummyLabels, std::make_shared<LinkMenuValueIface>(&m1)},
-    MenuItem{"Pump 2", LINK, dummyLabels, std::make_shared<LinkMenuValueIface>(&m2)},
-    MenuItem{"Heater", LINK, dummyLabels, std::make_shared<LinkMenuValueIface>(&m3)},
-    MenuItem{"Back to main",BACK, dummyLabels, std::make_shared<MenuValueIface>()},
+    MenuItem{"Pump 1", LINK, std::make_shared<LinkMenuValueIface>(&m1)},
+    MenuItem{"Pump 2", LINK, std::make_shared<LinkMenuValueIface>(&m2)},
+    MenuItem{"Heater", LINK, std::make_shared<LinkMenuValueIface>(&m3)},
+    MenuItem{"Back to main",BACK},
 };
 Menu mainMenu(ui,mainMenuItems);
 
