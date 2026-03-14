@@ -23,6 +23,7 @@ enum class ObjectModelSetterReturn {
     INVLABEL,
     INVFUNC,
     READONLY,
+    TOO_MANY,
     NOT_IMPLEMENTED
 };
 
@@ -39,7 +40,21 @@ class ObjectModelSetter {
 struct ObjectModelItem {
     ObjectModelItemValue value;
     ObjectModelSetter *setter = nullptr; // Pointer to setter function for the item
-};
+    bool saveToNVM = false;              // Will be saved and restored from NVM
+    size_t NVMStringLen = 0;             // how many bytes to reserve in NVM (for strings only)
+
+    ObjectModelItem() = default;
+    ObjectModelItem(ObjectModelItemValue val) : 
+        value(val) {}
+    ObjectModelItem(ObjectModelItemValue val, ObjectModelSetter *set) : 
+        value(val), setter(set) {}
+    ObjectModelItem(ObjectModelItemValue val, ObjectModelSetter *set, bool save) : 
+        value(val), setter(set), saveToNVM(save) {}
+    ObjectModelItem(ObjectModelItemValue val, ObjectModelSetter *set, size_t nvmStrLen) :
+        value(val), setter(set), saveToNVM(true), NVMStringLen(nvmStrLen) {}
+
+
+    };
 
 using ObjectModelItemMap = std::map<std::string, ObjectModelItem>;
 

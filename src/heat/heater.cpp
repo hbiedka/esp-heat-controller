@@ -13,8 +13,8 @@ Heater::Heater(uint8_t _pin, bool *_input, std::string name) :
         {"state",ObjectModelItem{ ObjectModelItemValue{0} }},
         {"timeToNextState", ObjectModelItem{ ObjectModelItemValue{0} }},
         {"on",ObjectModelItem{ ObjectModelItemValue{false} }},
-        {"delayToOn",ObjectModelItem{ ObjectModelItemValue{0}, &delaySetterFunctor }},
-        {"delayToOff",ObjectModelItem{ ObjectModelItemValue{0}, &delaySetterFunctor }}
+        {"delayToOn",ObjectModelItem{ ObjectModelItemValue{0}, &delaySetterFunctor, true }},
+        {"delayToOff",ObjectModelItem{ ObjectModelItemValue{0}, &delaySetterFunctor, true }}
     };
 
     firstRun = true;

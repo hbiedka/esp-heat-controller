@@ -53,6 +53,134 @@ std::string ObjectModel::serialize() {
     return result;
 }
 
+//load from NVM payload
+std::vector<unsigned char>::iterator ObjectModel::NVMLoad(std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator end)
+{
+    auto ptr = it;
+    ObjectModelItemMap &om = getObjectModel();
+    ObjectModelItemValue newValue{false};
+
+    for ( auto& map_item : om ) {
+        auto label = map_item.first;
+        auto item = map_item.second;
+        auto value = item.value;
+
+        if (std::holds_alternative<ObjectModel*>(value)) {
+            ObjectModel *linked_ob = std::get<ObjectModel*>(value);
+            ptr = linked_ob->NVMLoad(ptr, end);
+            if (ptr == end) break;
+            continue;
+        }
+
+        if (!item.saveToNVM)
+            continue;
+
+        if (std::holds_alternative<bool>(value)) {
+            // *ptr = std::get<bool>(value) ? 0 : 1;
+            bool newBool = !!(*ptr);
+            ptr++;
+            if (ptr == end) break;
+
+            newValue = ObjectModelItemValue{newBool};
+
+        }
+        else if (std::holds_alternative<int>(value)) {
+            // convert from char array
+            int newInt;
+            size_t size = sizeof(int);
+
+            char bytes[size];
+            for (size_t i = 0; i < size; i++) {
+                bytes[i] = *ptr;
+                ptr++;
+                if (ptr == end) break;
+
+            }
+
+            memcpy(&newInt,bytes,size);
+            newValue = ObjectModelItemValue{newInt};
+        }
+        else if (std::holds_alternative<std::string>(value)) {
+            std::string newStr;
+            for (size_t i = 0; i < item.NVMStringLen; i++) {
+                char c = *ptr;
+                ptr++;
+                if (ptr == end) break;
+
+                if (c == 0) break; // stop at null terminator
+                newStr += c;
+            }
+            newValue = ObjectModelItemValue{newStr};
+        }
+
+        auto ret = setProperty(label,newValue);
+        if (ret != ObjectModelSetterReturn::OK) {
+            //TODO throw exception
+            break;
+        }
+    }
+    return ptr;
+}
+
+//store in NVM payload
+std::vector<unsigned char>::iterator ObjectModel::NVMDump(std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator end)
+{
+    auto ptr = it;
+
+    ObjectModelItemMap &om = getObjectModel();
+
+    for ( auto& map_item : om ) {
+        auto item = map_item.second; 
+        auto value = item.value;
+
+        if (std::holds_alternative<ObjectModel*>(value)) {
+            ObjectModel *linked_ob = std::get<ObjectModel*>(value);
+            ptr = linked_ob->NVMDump(ptr, end);
+            if (ptr == end) break;
+            continue;
+        }
+
+        if (!item.saveToNVM)
+            continue;
+
+        if (std::holds_alternative<bool>(value)) {
+            *ptr = std::get<bool>(value) ? 0 : 1;
+            ptr++;
+        }
+        else if (std::holds_alternative<int>(value)) {
+            // convert to char array
+            int val = std::get<int>(value);
+            size_t size = sizeof(int);
+
+            char bytes[size];
+            memcpy(bytes,&val,size);
+
+            for (size_t i = 0; i < size; i++) {
+                *ptr = bytes[i];
+                ptr++;
+                if (ptr == end) break;
+            }
+        }
+        else if (std::holds_alternative<std::string>(value)) {
+            const std::string &str = std::get<std::string>(value);
+            size_t len = str.length();
+            if (len > item.NVMStringLen) {
+                len = item.NVMStringLen;
+            }
+            for (char c : str) {
+                *ptr++ = static_cast<unsigned char>(c);
+                if (ptr == end) break;
+            }
+            // if not use full length, add \0 at the end
+            if (len < item.NVMStringLen) {
+                *ptr++ = 0;
+                if (ptr == end) break;
+            }
+        }
+    }
+    return ptr;
+}
+
 ObjectModelGetterReturn ObjectModel::getProperty(const std::string &label, ObjectModelItemValue &value) {
 
     ObjectModelItemMap &om = getObjectModel();
@@ -125,7 +253,12 @@ ObjectModelSetterReturn ObjectModel::setProperty(const std::string &label, const
     if (it->second.setter == nullptr)
         return ObjectModelSetterReturn::READONLY;
 
-    return (*it->second.setter)(label,value);
+    ObjectModelSetterReturn ret = (*it->second.setter)(label,value);
+    if (ret == ObjectModelSetterReturn::OK) {
+        updateLocalProperty(label,value);
+    }
+
+    return ret;
 }
 
 void ObjectModel::updateLocalProperty(const std::string &label, const ObjectModelItemValue &value)

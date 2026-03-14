@@ -16,6 +16,10 @@ class ObjectModel {
     public:
         virtual ObjectModelItemMap &getObjectModel(){ return omItems; };
         std::string serialize();
+
+        std::vector<unsigned char>::iterator NVMLoad(std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator end);
+        std::vector<unsigned char>::iterator NVMDump(std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator end);
+        
         ObjectModelGetterReturn getProperty(const std::string &label, ObjectModelItemValue &value);
         ObjectModelSetterReturn setProperty(const std::string &label, const ObjectModelItemValue &value);
 
