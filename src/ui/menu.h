@@ -8,7 +8,8 @@
 #include "ui.h"
 #include "navigativeScreen.h"
 #include "menuValueIface.h"
-#include "menuRef.h"
+
+class Menu;
 
 enum MenuItemType {
     BOOL = 0,   // yes/no

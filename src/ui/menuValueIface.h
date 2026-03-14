@@ -1,8 +1,6 @@
 #ifndef MENU_VALUE_IFACE_H
 #define MENU_VALUE_IFACE_H
 
-#include "menuRef.h"
-
 enum class MenuGetterReturn {
     OK = 0,
     GETTER_UNDEF,
@@ -21,17 +19,12 @@ enum class MenuSetterReturn {
     VAL_INVALID,
 };
 
-
-
 class MenuValueIface {
     public:
         virtual MenuGetterReturn get(bool &ref) const { 
             return MenuGetterReturn::GETTER_UNDEF;
         }
         virtual MenuGetterReturn get(int &ref) const { 
-            return MenuGetterReturn::GETTER_UNDEF;
-        }
-        virtual MenuGetterReturn get(Menu *&ptr) const { 
             return MenuGetterReturn::GETTER_UNDEF;
         }
 
@@ -43,37 +36,5 @@ class MenuValueIface {
         }
         virtual ~MenuValueIface() = default;
 };
-
-class BoolMenuValueIface : public MenuValueIface {
-    private:
-        bool &value;
-    
-    public:
-        BoolMenuValueIface(bool &v);
-        MenuGetterReturn get(bool &ref) const override;
-        MenuSetterReturn set(bool &ref) const override;
-    };
-    
-class IntMenuValueIface : public MenuValueIface {
-    private:
-        int &value;
-        int floor;
-        int ceil;
-    
-    public:
-        IntMenuValueIface(int &v, int limit);
-        IntMenuValueIface(int &v, int bottom_limit, int top_limit);
-        MenuGetterReturn get(int &ref) const override;
-        MenuSetterReturn set(int &ref) const override;
-};
-
-class LinkMenuValueIface : public MenuValueIface {
-    private:
-        Menu *link;
-    
-    public:
-        LinkMenuValueIface(Menu *ptr) : link(ptr) {}
-        MenuGetterReturn get(Menu *&ref) const override;
-};  
 
 #endif

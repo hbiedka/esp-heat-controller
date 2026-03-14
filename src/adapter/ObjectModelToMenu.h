@@ -5,7 +5,6 @@
 
 #include "objectModel/ObjectModel.h"
 #include "ui/menuValueIface.h"
-#include "ui/menu.h"
 
 class BoolObjectModelIface : public MenuValueIface {
     private:
