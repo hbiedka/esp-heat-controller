@@ -103,11 +103,9 @@ void Menu::buttonEnter() {
         valueEdit = !valueEdit;
         Redraw(true);
     } else if (item.type == LINK) {
-        Menu *linkMenu = nullptr;
-        if (item.iface->get(linkMenu) == MenuGetterReturn::OK) {
-            Jump(linkMenu);
-            return;
-        }
+        if (!item.link) return; //TODO throw exception
+        Jump(item.link);
+        return;
     } else if (item.type == BACK) {
         //set pointer at first position before exit
         pos = 0;

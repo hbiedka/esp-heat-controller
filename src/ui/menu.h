@@ -27,7 +27,8 @@ struct MenuItem {
                                             // ignored for any other type
 
     std::shared_ptr<const MenuValueIface> iface;    // interface with get/set methods for int and bool
-                                    // and get method for link
+    Menu *link = nullptr;                           // Link to menu item
+
     std::string format = "%d";            // format string for int
                                     // ignored for any other type
 
@@ -50,6 +51,19 @@ struct MenuItem {
     MenuItem(const std::string &label, MenuItemType type,
              std::shared_ptr<const MenuValueIface> iface)
         : label(label), type(type), enumLabels(std::vector<std::string>()), iface(std::move(iface)) {}
+
+    MenuItem(const std::string &label, MenuItemType type,
+            Menu *_link
+        )
+        : label(label), type(type), enumLabels(std::vector<std::string>())
+        {
+            //only LINK can Pass a menu element
+            if (type == LINK) {
+                link = _link;
+                iface = std::make_shared<MenuValueIface>();
+            }
+            //else TODO throw exception
+        }
 
     MenuItem(const std::string &label, MenuItemType type)
         : label(label), type(type), enumLabels(std::vector<std::string>())

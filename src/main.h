@@ -87,9 +87,9 @@ std::vector<MenuItem> m3Items{
 Menu m3(ui, m3Items);
 
 std::vector<MenuItem> mainMenuItems{
-    MenuItem{"Pump 1", LINK, std::make_shared<LinkMenuValueIface>(&m1)},
-    MenuItem{"Pump 2", LINK, std::make_shared<LinkMenuValueIface>(&m2)},
-    MenuItem{"Heater", LINK, std::make_shared<LinkMenuValueIface>(&m3)},
+    MenuItem{"Pump 1", LINK, &m1},
+    MenuItem{"Pump 2", LINK, &m2},
+    MenuItem{"Heater", LINK, &m3},
     MenuItem{"Back to main",BACK},
 };
 Menu mainMenu(ui,mainMenuItems);
