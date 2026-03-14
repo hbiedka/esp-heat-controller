@@ -13,6 +13,7 @@
 #include "adapter/ObjectModelToMenu.h"
 #include "objectModel/ObjectModel.h"
 #include "objectModel/ObjectModelWatcher.h"
+#include "nvmem/nvmem.h"
 
 #include "ui/ui.h"
 #include "ui/mainScreen.h"
@@ -52,6 +53,8 @@ Heater htr(PIN_HEATER,combined.getStatePtr(),"Heater");
 std::vector<ObjectModel*> pumps{{&pump1,&pump2,&htr}};
 ObjectModelList pump_list{pumps};
 
+NVMem eeprom{pump_list, 64};
+
 Selftest selftest(outputs,&panel);
 
 Oled oled(OLED_ADDR);
@@ -64,6 +67,7 @@ auto pump1toff = std::make_shared<IntObjectModelIface>(&pump1,"delayToOff",0,100
 auto pump2toff = std::make_shared<IntObjectModelIface>(&pump2,"delayToOff",0,100);
 auto htrtoff = std::make_shared<IntObjectModelIface>(&htr,"delayToOff",0,100);
 
+void saveToEeprom();
 
 std::vector<MenuItem> m1Items{
     MenuItem{"P1 delay on", INT, pump1ton, "%d s"},
@@ -92,7 +96,7 @@ std::vector<MenuItem> mainMenuItems{
     MenuItem{"Heater", LINK, &m3},
     MenuItem{"Back to main",BACK},
 };
-Menu mainMenu(ui,mainMenuItems);
+Menu mainMenu(ui,mainMenuItems, saveToEeprom);
 
 MainScreen mainScreen(ui,&mainMenu,&pump1,&pump2,&htr);
 

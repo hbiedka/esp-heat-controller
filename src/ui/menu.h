@@ -102,8 +102,11 @@ class Menu : public ButtonInteractive, public NavigativeScreen {
         void Redraw(bool forceRedraw);
         void RedrawValueOnPos(unsigned int posToRedraw);
 
+        void (*returnCallback)(void) = nullptr;
+
     public:
         Menu(Ui &_ui, std::vector<MenuItem> _items);
+        Menu(Ui &_ui, std::vector<MenuItem> _items, void (*_returnCallback)(void));
 
         void Show() override;
 

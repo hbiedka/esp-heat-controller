@@ -10,6 +10,12 @@ DebugObjectModelWatcher serialP1Watcher("p1");
 DebugObjectModelWatcher serialP2Watcher("p2");
 DebugObjectModelWatcher serialHtrWatcher("htr");
 
+void saveToEeprom()
+{
+  eeprom.save();
+  Serial.println("Saving to eeprom");
+}
+
 void setup() {
 
   pinMode(PIN_LED_STATUS,OUTPUT);
@@ -33,6 +39,8 @@ void setup() {
 
   oled.Init();
   mainScreen.Show();
+
+  eeprom.slowInitAndLoad();
 }
 
 void loop() {
