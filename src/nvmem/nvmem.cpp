@@ -19,6 +19,13 @@ static uint16_t crc16(uint8_t *buf, size_t len)
 	return crc;
 }
 
+static size_t toBlocks(size_t bytes)
+{
+    int blocks = bytes / EEPROM_BLOCK_SIZE;
+    if (bytes % EEPROM_BLOCK_SIZE) blocks++;
+    return blocks;
+}
+
 static void show() {
     for(size_t i = 0; i < 64; i++)
         Serial.printf("%d: 0x%x\n",i,EEPROM.read(i));
@@ -27,8 +34,7 @@ static void show() {
 NVMem::NVMem(ObjectModel &om, size_t size) : om(om) {
     memory.resize(size);
 
-    numEeepromBlocks = size / EEPROM_BLOCK_SIZE;
-    if (size % EEPROM_BLOCK_SIZE) numEeepromBlocks++;
+    numEeepromBlocks = toBlocks(size);
 }
 
 void NVMem::init() {
@@ -106,7 +112,15 @@ bool NVMem::saveBlock(size_t num) {
 
 void NVMem::load() {
 
-    for (size_t block = 0; block < numEeepromBlocks; block++)
+    // do a dirty dump to calculate number of blocks required
+    std::vector<uint8_t> tempMemory;
+    tempMemory.reserve(memory.size());
+
+    auto tempIt = om.NVMDump(tempMemory.begin(),tempMemory.end());
+
+    size_t blocksToLoad = toBlocks(std::distance(tempMemory.begin(),tempIt));
+
+    for (size_t block = 0; block < blocksToLoad; block++)
         loadBlock(block);
 
     auto it = om.NVMLoad(memory.begin(), memory.end());
@@ -117,11 +131,13 @@ void NVMem::save() {
     auto it = om.NVMDump(memory.begin(), memory.end());
     Serial.printf("%d bytes ready to save to EEPROM\n",std::distance(memory.begin(),it));
 
-    for (size_t block = 0; block < numEeepromBlocks; block++) {
+    size_t blocksToSave = toBlocks(std::distance(memory.begin(),it));  
+
+    for (size_t block = 0; block < blocksToSave; block++) {
         bool saved = saveBlock(block);
         delay(2);
         Serial.printf("block %d of %d %s\n",
-            block+1,numEeepromBlocks,
+            block+1,blocksToSave,
             saved ? "saved" : "skipped"
         );                
     }

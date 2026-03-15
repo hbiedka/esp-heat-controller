@@ -67,6 +67,20 @@ std::vector<unsigned char>::iterator ObjectModel::NVMLoad(std::vector<unsigned c
 
         if (std::holds_alternative<ObjectModel*>(value)) {
             ObjectModel *linked_ob = std::get<ObjectModel*>(value);
+
+            //verify name
+            for (auto c : label) {
+                // Perform verification on each character 'c'
+                if (*ptr != static_cast<unsigned char>(c)) {
+                    Serial.printf("Verification failed at label '%s', expected '%c', got '%c'\n",
+                                  label.c_str(), static_cast<char>(c), *ptr);
+                    break;
+                    //TODO throw exception
+                }
+                ptr++;
+                if (ptr == end) break;
+            }
+
             ptr = linked_ob->NVMLoad(ptr, end);
             if (ptr == end) break;
             continue;
@@ -130,11 +144,20 @@ std::vector<unsigned char>::iterator ObjectModel::NVMDump(std::vector<unsigned c
     ObjectModelItemMap &om = getObjectModel();
 
     for ( auto& map_item : om ) {
+        auto label = map_item.first;
         auto item = map_item.second; 
         auto value = item.value;
 
         if (std::holds_alternative<ObjectModel*>(value)) {
             ObjectModel *linked_ob = std::get<ObjectModel*>(value);
+
+            //add label at the beginning
+            for (auto c : label) {
+                *ptr = static_cast<unsigned char>(c);
+                ptr++;
+                if (ptr == end) break;
+            }
+
             ptr = linked_ob->NVMDump(ptr, end);
             if (ptr == end) break;
             continue;
