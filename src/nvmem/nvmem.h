@@ -17,7 +17,7 @@ class NVMem {
 
         size_t numEeepromBlocks;
 
-        void loadBlock(size_t num);
+        bool loadBlock(size_t num);
         bool saveBlock(size_t num);
 
     public:

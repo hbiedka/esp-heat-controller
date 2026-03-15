@@ -47,7 +47,7 @@ void NVMem::slowInitAndLoad() {
     load();
 }
 
-void NVMem::loadBlock(size_t num) {
+bool NVMem::loadBlock(size_t num) {
             
     uint8_t data[EEPROM_BLOCK_SIZE];
     uint8_t crc[EEPROM_CRC_SIZE];
@@ -69,6 +69,7 @@ void NVMem::loadBlock(size_t num) {
     //TODO throw error if crc does not match
     if (read_crc != calculated_crc) {
         Serial.printf("CRC ERROR bl %d CRC read 0x%x calc 0x%x\n",num,read_crc,calculated_crc);
+        return false;
     }
 
     auto it = memory.begin() + (num*EEPROM_BLOCK_SIZE);
@@ -76,6 +77,8 @@ void NVMem::loadBlock(size_t num) {
         *(it++) = data[i];
         if (it == memory.end()) break;
     }
+
+    return true;
 }
 
 bool NVMem::saveBlock(size_t num) {
@@ -120,8 +123,14 @@ void NVMem::load() {
 
     size_t blocksToLoad = toBlocks(std::distance(tempMemory.begin(),tempIt));
 
-    for (size_t block = 0; block < blocksToLoad; block++)
-        loadBlock(block);
+    bool ret;
+    for (size_t block = 0; block < blocksToLoad; block++) {
+        ret = loadBlock(block);
+        if (!ret) {
+            Serial.printf("Failed to load block %d\n", block);
+            return;
+        }
+    }
 
     auto it = om.NVMLoad(memory.begin(), memory.end());
     Serial.printf("%d bytes loaded from EEPROM\n",std::distance(memory.begin(),it));
