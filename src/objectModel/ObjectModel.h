@@ -14,6 +14,8 @@ class ObjectModel {
         ObjectModelItemMap omItems;
         void updateLocalProperty(const std::string &label, const ObjectModelItemValue &value);
     public:
+        ObjectModel() = default;
+        ObjectModel(const ObjectModelItemMap &items) : omItems(items) {};
         virtual ObjectModelItemMap &getObjectModel(){ return omItems; };
         std::string serialize();
 

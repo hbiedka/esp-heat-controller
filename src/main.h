@@ -50,10 +50,17 @@ Heater pump1(PIN_PUMP1,in1.getStatePtr(),"Pump 1");
 Heater pump2(PIN_PUMP2,in2.getStatePtr(),"Pump 2");
 Heater htr(PIN_HEATER,combined.getStatePtr(),"Heater");
 
-std::vector<ObjectModel*> pumps{{&pump1,&pump2,&htr}};
+std::vector<ObjectModel*> pumps{{&pump1,&pump2}};
 ObjectModelList pump_list{pumps};
+ObjectModel omRoot{
+    {
+        {"pumps", ObjectModelItem{&pump_list}},
+        {"heater", ObjectModelItem{&htr}},
+    }
+};
 
-NVMem eeprom{pump_list, 64};
+
+NVMem eeprom{omRoot, 512};
 
 Selftest selftest(outputs,&panel);
 
