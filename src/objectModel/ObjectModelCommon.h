@@ -50,9 +50,24 @@ struct ObjectModelItem {
         value(val), setter(set) {}
     ObjectModelItem(ObjectModelItemValue val, ObjectModelSetter *set, bool save) : 
         value(val), setter(set), saveToNVM(save) {}
-    ObjectModelItem(ObjectModelItemValue val, ObjectModelSetter *set, size_t nvmStrLen) :
-        value(val), setter(set), saveToNVM(true), NVMStringLen(nvmStrLen) {}
+    ObjectModelItem(ObjectModelItemValue val, ObjectModelSetter *set, bool save, size_t nvmStrLen) : 
+        value(val), setter(set), saveToNVM(save), NVMStringLen(nvmStrLen) {}
 
+    // Factory methods for creating ObjectModelItems
+    static ObjectModelItem createStringItem(const std::string &str, ObjectModelSetter *setter) {
+        return ObjectModelItem{str, setter, false};
+    }
+    static ObjectModelItem createStringItem(const std::string &str, ObjectModelSetter *setter, size_t nvmStrLen) {
+        return ObjectModelItem{str, setter, true, nvmStrLen};
+    }
+
+    static ObjectModelItem createIntItem(int value, ObjectModelSetter *setter, bool saveToNVM = false) {
+        return ObjectModelItem{value, setter, saveToNVM};
+    }
+
+    static ObjectModelItem createBoolItem(bool value, ObjectModelSetter *setter, bool saveToNVM = false) {
+        return ObjectModelItem{value, setter, saveToNVM};
+    }
 
     };
 
