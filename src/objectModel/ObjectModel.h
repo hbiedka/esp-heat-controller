@@ -21,7 +21,8 @@ class ObjectModel {
 
         std::vector<unsigned char>::iterator NVMLoad(std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator end);
         std::vector<unsigned char>::iterator NVMDump(std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator end);
-        
+        size_t getNVMSize();
+
         ObjectModelGetterReturn getProperty(const std::string &label, ObjectModelItemValue &value);
         ObjectModelSetterReturn setProperty(const std::string &label, const ObjectModelItemValue &value);
 

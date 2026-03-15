@@ -115,13 +115,11 @@ bool NVMem::saveBlock(size_t num) {
 
 void NVMem::load() {
 
-    // do a dirty dump to calculate number of blocks required
-    std::vector<uint8_t> tempMemory;
-    tempMemory.reserve(memory.size());
+    //get size of all object model items
+    size_t totalSize = om.getNVMSize();
+    size_t blocksToLoad = toBlocks(totalSize);
 
-    auto tempIt = om.NVMDump(tempMemory.begin(),tempMemory.end());
-
-    size_t blocksToLoad = toBlocks(std::distance(tempMemory.begin(),tempIt));
+    Serial.printf("%d bytes up to load from EEPROM\n", totalSize);
 
     bool ret;
     for (size_t block = 0; block < blocksToLoad; block++) {

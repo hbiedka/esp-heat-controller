@@ -136,6 +136,39 @@ std::vector<unsigned char>::iterator ObjectModel::NVMLoad(std::vector<unsigned c
     return ptr;
 }
 
+
+size_t ObjectModel::getNVMSize()
+{
+    size_t totalSize = 0;
+    ObjectModelItemMap &om = getObjectModel();
+
+    for (const auto& map_item : om) {
+        const auto& item = map_item.second;
+
+        if (std::holds_alternative<ObjectModel*>(item.value)) {
+            ObjectModel *linked_ob = std::get<ObjectModel*>(item.value);
+            if (linked_ob != nullptr) {
+                totalSize += linked_ob->getNVMSize();
+            }
+            continue;
+        }
+
+        if (!item.saveToNVM)
+            continue;
+
+        if (std::holds_alternative<bool>(item.value)) {
+            totalSize += 1;
+        }
+        else if (std::holds_alternative<int>(item.value)) {
+            totalSize += sizeof(int);
+        }
+        else if (std::holds_alternative<std::string>(item.value)) {
+            totalSize += item.NVMStringLen;
+        }
+    }
+    return totalSize;
+}
+
 //store in NVM payload
 std::vector<unsigned char>::iterator ObjectModel::NVMDump(std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator end)
 {
