@@ -21,16 +21,16 @@ public:
 class RLadderButton {
     private:
         uint8_t id = 0;
-        uint16_t *state = nullptr;
-        uint16_t thr_low = 0;
-        uint16_t thr_high = 0;
+        unsigned int *state = nullptr;
+        unsigned int thr_low = 0;
+        unsigned int  thr_high = 0;
 
-        uint16_t t_press = 40; //short press time
-        uint16_t t_hold = 500; //hold press time
-        uint16_t t_hold_decay = 75; //hold press decay time
-        uint16_t t_hold_sustain = 50; //minimum hold press time
+        unsigned int t_press = 40; //short press time
+        unsigned int t_hold = 500; //hold press time
+        unsigned int t_hold_decay = 75; //hold press decay time
+        unsigned int t_hold_sustain = 50; //minimum hold press time
 
-        uint16_t t_hold_buffer; //hold press buffer
+        unsigned int t_hold_buffer; //hold press buffer
 
         bool last_pressed = false;
         unsigned long state_ts = 0;
@@ -52,7 +52,7 @@ class RLadderButton {
 
         uint8_t getId() { return id; };
 
-        RLadderButton(uint8_t _id,uint16 *_state, uint16_t _thr_low, uint16_t _thr_high) : 
+        RLadderButton(uint8_t _id,unsigned int *_state, unsigned int _thr_low, unsigned int _thr_high) : 
             id(_id),
             state(_state),
             thr_low(_thr_low),

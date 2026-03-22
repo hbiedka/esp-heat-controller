@@ -15,4 +15,17 @@ class Input
         }
 };
 
+class AnalogInput
+{
+    protected:
+        unsigned int state = false;
+
+    public:
+        virtual ~AnalogInput() = default;
+        virtual void Spin() = 0;
+        virtual unsigned int* getStatePtr()
+        {
+            return &state;
+        }
+};
 #endif

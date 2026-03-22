@@ -6,6 +6,7 @@
 #include "button/buttonGroup.h"
 #include "util/selftest.h"
 #include "input/externalInput.h"
+#include "input/analogExternalInput.h"
 #include "input/logicInput.h"
 #include "heat/heater.h"
 #include "display/oled.h"
@@ -32,13 +33,16 @@
 #define PIN_IN1 12
 #define PIN_IN2 14
 
+#define PIN_ADC_RESISTOR_LADDER 0
+
 //init buttons
-uint16_t resistor_ladder_out = 0;
+// uint16_t resistor_ladder_out = 0;
+AnalogExternalInput resistorLadderButtons(PIN_ADC_RESISTOR_LADDER);
 
 ButtonGroup panel({
-    RLadderButton(1,&resistor_ladder_out,100,150),
-    RLadderButton(2,&resistor_ladder_out,350,400),
-    RLadderButton(3,&resistor_ladder_out,550,600)
+    RLadderButton(1,resistorLadderButtons.getStatePtr(),100,150),
+    RLadderButton(2,resistorLadderButtons.getStatePtr(),350,400),
+    RLadderButton(3,resistorLadderButtons.getStatePtr(),550,600)
 });
 
 std::vector<uint8_t> outputs{PIN_PUMP1,PIN_PUMP2,PIN_HEATER};

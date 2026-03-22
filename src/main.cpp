@@ -23,13 +23,6 @@ void setup() {
 
   Serial.begin(9600);
 
-  pump1.setProperty("delayToOn",10);
-  pump1.setProperty("delayToOff",10);
-  pump2.setProperty("delayToOn",10);
-  pump2.setProperty("delayToOff",10);
-  htr.setProperty("delayToOn",3);
-  htr.setProperty("delayToOff",3);
-
   pump1.AddWatcher("state",&serialP1Watcher);
   pump2.AddWatcher("state",&serialP2Watcher);
   htr.AddWatcher("state",&serialHtrWatcher);
@@ -46,7 +39,7 @@ void setup() {
 void loop() {
   unsigned long ts = millis();
 
-  resistor_ladder_out = analogRead(0);
+  resistorLadderButtons.Spin();
   panel.Spin(ts);
 
   in1.Spin();
