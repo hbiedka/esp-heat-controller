@@ -1,4 +1,5 @@
 #include "ObjectModel.h"
+#include <stdexcept>
 
 std::string serializeValue(const ObjectModelItemValue &value) {
     if (std::holds_alternative<bool>(value)) {
@@ -338,4 +339,16 @@ void ObjectModel::updateLocalProperty(const std::string &label, const ObjectMode
             }
         }
     }
+}
+
+ObjectModel& ObjectModel::operator[](const std::string &label) {
+    auto item = omItems.find(label);
+    if (item != omItems.end()) {
+        if (std::holds_alternative<ObjectModel*>(item->second.value)) {
+            return *std::get<ObjectModel*>(item->second.value);
+        } else {
+            throw std::bad_variant_access();
+        }
+    }
+    throw std::out_of_range("ObjectModel: label not found");
 }

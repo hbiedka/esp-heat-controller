@@ -37,6 +37,12 @@ class ObjectModel {
             //TODO
         };
 
+        ObjectModel& operator[](const std::string &label);
+        ObjectModel& operator[](const size_t &index)
+        {
+            return operator[](std::to_string(index));
+        }
+
 };
 
 class ObjectModelList : public ObjectModel {
@@ -45,13 +51,6 @@ class ObjectModelList : public ObjectModel {
             for (size_t i = 0; i < children.size(); i++) {
                 omItems[std::to_string(i)] = ObjectModelItem{children[i]};
             }
-        }
-        ObjectModel* operator[](size_t index) {
-            auto it = omItems.find(std::to_string(index));
-            if (it != omItems.end() && std::holds_alternative<ObjectModel*>(it->second.value)) {
-                return std::get<ObjectModel*>(it->second.value);
-            }
-            return nullptr;
         }
 };
 
