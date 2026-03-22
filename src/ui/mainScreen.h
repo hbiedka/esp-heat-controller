@@ -35,7 +35,7 @@ class MainScreen :
         NavigativeScreen *menu;
         bool shown = false;
 
-        ObjectModel *pump1, *pump2, *htr;
+        ObjectModel &om;
 
         void ShowTimeToNextState(unsigned int index, int val);
         void ShowState(unsigned int index, int val);
@@ -44,7 +44,7 @@ class MainScreen :
         friend class HeaterStateWatcher;
         friend class HeaterTimeToNextStateWatcher;
 
-        MainScreen(Ui &_ui, NavigativeScreen *_menu, ObjectModel *pump1,ObjectModel *pump2,ObjectModel *htr);
+        MainScreen(Ui &_ui, NavigativeScreen *_menu, ObjectModel &_om);
 
         void Show();
         void buttonEnter();

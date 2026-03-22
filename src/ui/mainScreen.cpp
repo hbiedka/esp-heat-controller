@@ -15,19 +15,17 @@ void HeaterTimeToNextStateWatcher::operator()(const std::string &property, const
     host->ShowTimeToNextState(heaterId,std::get<int>(item.value));
 };
 
-MainScreen::MainScreen(Ui &_ui, NavigativeScreen *_menu,ObjectModel *_pump1,ObjectModel *_pump2,ObjectModel *_htr):
+MainScreen::MainScreen(Ui &_ui, NavigativeScreen *_menu,ObjectModel &_om):
     ui(_ui),
     menu(_menu),
-    pump1(_pump1),
-    pump2(_pump2),
-    htr(_htr)
+    om(_om)
 {
-    pump1->AddWatcher("state",new HeaterStateWatcher(this,1));
-    pump2->AddWatcher("state",new HeaterStateWatcher(this,2));
-    htr->AddWatcher("state",new HeaterStateWatcher(this,3));
-    pump1->AddWatcher("timeToNextState",new HeaterTimeToNextStateWatcher(this,1));
-    pump2->AddWatcher("timeToNextState",new HeaterTimeToNextStateWatcher(this,2));
-    htr->AddWatcher("timeToNextState",new HeaterTimeToNextStateWatcher(this,3));
+    om["pumps"][0].AddWatcher("state",new HeaterStateWatcher(this,1));
+    om["pumps"][1].AddWatcher("state",new HeaterStateWatcher(this,2));
+    om["heater"].AddWatcher("state",new HeaterStateWatcher(this,3));
+    om["pumps"][0].AddWatcher("timeToNextState",new HeaterTimeToNextStateWatcher(this,1));
+    om["pumps"][1].AddWatcher("timeToNextState",new HeaterTimeToNextStateWatcher(this,2));
+    om["heater"].AddWatcher("timeToNextState",new HeaterTimeToNextStateWatcher(this,3));
 }
 
 void MainScreen::Show() {
@@ -42,9 +40,9 @@ void MainScreen::Show() {
     ui[3][0].Print("Heater:");
 
     int htr_state, p1_state, p2_state;
-    pump1->getInt("state",p1_state);
-    pump2->getInt("state",p2_state);
-    htr->getInt("state",htr_state);
+    om["pumps"][0].getInt("state",p1_state);
+    om["pumps"][1].getInt("state",p2_state);
+    om["heater"].getInt("state",htr_state);
 
     ShowState(1,p1_state);
     ShowState(2,p2_state);

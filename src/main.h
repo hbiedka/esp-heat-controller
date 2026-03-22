@@ -11,6 +11,7 @@
 #include "display/oled.h"
 #include "display/oledUi.h"
 #include "adapter/ObjectModelToMenu.h"
+#include "network/Wifi.h"
 #include "objectModel/ObjectModel.h"
 #include "objectModel/ObjectModelWatcher.h"
 #include "nvmem/nvmem.h"
@@ -105,6 +106,6 @@ std::vector<MenuItem> mainMenuItems{
 };
 Menu mainMenu(ui,mainMenuItems, saveToEeprom);
 
-MainScreen mainScreen(ui,&mainMenu,&pump1,&pump2,&htr);
+MainScreen mainScreen(ui,&mainMenu,omRoot);
 
 #endif 
