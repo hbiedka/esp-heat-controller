@@ -39,7 +39,7 @@ void setup() {
 void loop() {
   unsigned long ts = millis();
 
-  resistorLadderButtons.Spin();
+  resistorLadderButtons.Spin(ts);
   panel.Spin(ts);
 
   in1.Spin(ts);
