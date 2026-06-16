@@ -4,7 +4,7 @@ ExternalInput::ExternalInput(uint8_t _pin) : pin(_pin) {
     pinMode(pin,INPUT_PULLUP);
 }
 
-void ExternalInput::Spin() {
+void ExternalInput::Spin(unsigned long ts) {
     digitalWrite(pin,1);
     state = digitalRead(pin) == 0;
 }

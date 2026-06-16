@@ -9,7 +9,7 @@ class ExternalInput : public Input {
         uint8_t pin;
     public:
         ExternalInput(uint8_t _pin);
-        void Spin();
+        void Spin(unsigned long ts) override;
 };
 
 #endif

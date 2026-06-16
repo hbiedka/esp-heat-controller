@@ -5,7 +5,7 @@ LogicInput::LogicInput(LogicInputOperation _op, const std::vector<Input*> _input
     inputs(_inputs)
 {}
 
-void LogicInput::Spin()
+void LogicInput::Spin(unsigned long ts)
 {
     if (inputs.empty()) return;
 

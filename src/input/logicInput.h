@@ -17,7 +17,7 @@ class LogicInput : public Input {
     public:
         LogicInput(LogicInputOperation _op, const std::vector<Input*> _inputs);
 
-        void Spin() override;
+        void Spin(unsigned long ts) override;
 };
 
 

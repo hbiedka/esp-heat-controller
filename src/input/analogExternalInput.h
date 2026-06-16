@@ -7,9 +7,10 @@
 class AnalogExternalInput : public AnalogInput {
     private:
         uint8_t pin;
+        unsigned long lastTs = 0;
     public:
         AnalogExternalInput(uint8_t _pin);
-        void Spin();
+        void Spin(unsigned long ts) override;
 };
 
 #endif

@@ -42,9 +42,9 @@ void loop() {
   resistorLadderButtons.Spin();
   panel.Spin(ts);
 
-  in1.Spin();
-  in2.Spin();
-  combined.Spin();
+  in1.Spin(ts);
+  in2.Spin(ts);
+  combined.Spin(ts);
 
   pump1.Spin(ts);
   pump2.Spin(ts);
