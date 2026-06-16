@@ -13,6 +13,7 @@
 #include "display/oledUi.h"
 #include "adapter/ObjectModelToMenu.h"
 #include "network/Wifi.h"
+#include "network/HttpServer.h"
 #include "objectModel/ObjectModel.h"
 #include "objectModel/ObjectModelWatcher.h"
 #include "nvmem/nvmem.h"
@@ -68,6 +69,8 @@ ObjectModel omRoot{
 
 
 NVMem eeprom{omRoot, 512};
+
+HttpServer httpServer(omRoot);
 
 Selftest selftest(outputs,&panel);
 

@@ -51,6 +51,7 @@ void loop() {
   htr.Spin(ts);
 
   wifi.Spin(ts);
+  httpServer.Spin(ts);
 
 }
 
