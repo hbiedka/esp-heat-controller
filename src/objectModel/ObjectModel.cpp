@@ -56,6 +56,12 @@ std::string ObjectModel::serialize() {
     return result;
 }
 
+ObjectModelSetterReturn ObjectModel::deserialize(const std::string &patch)
+{
+    //TODO implement
+    return ObjectModelSetterReturn::NOT_IMPLEMENTED;
+}
+
 //load from NVM payload
 std::vector<unsigned char>::iterator ObjectModel::NVMLoad(std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator end)
 {
@@ -349,7 +355,7 @@ void ObjectModel::updateLocalProperty(const std::string &label, const ObjectMode
         //look for watchers
         for (auto watcher : watchers) {
             if (watcher.property == it->first && watcher.functor) {
-                (*watcher.functor)(watcher.property,it->second);
+                (*watcher.functor)(watcher.property,watcher.context,it->second);
             }
         }
     }

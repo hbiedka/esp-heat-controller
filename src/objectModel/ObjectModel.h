@@ -18,6 +18,7 @@ class ObjectModel {
         ObjectModel(const ObjectModelItemMap &items) : omItems(items) {};
         virtual ObjectModelItemMap &getObjectModel(){ return omItems; };
         std::string serialize();
+        ObjectModelSetterReturn deserialize(const std::string &patch);
 
         std::vector<unsigned char>::iterator NVMLoad(std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator end);
         std::vector<unsigned char>::iterator NVMDump(std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator end);
@@ -31,7 +32,10 @@ class ObjectModel {
         ObjectModelGetterReturn getString(const std::string &label, std::string &value);
 
         void AddWatcher(const std::string &property, ObjectModelWatcher *watcher) {
-            watchers.push_back({property,watcher});
+            watchers.push_back({property,"",watcher});
+        };
+        void AddWatcher(const std::string &property, const std::string &context, ObjectModelWatcher *watcher) {
+            watchers.push_back({property,context,watcher});
         };
         void RemoveWatcher(std::string &property, ObjectModelWatcher &watcher) {
             //TODO
