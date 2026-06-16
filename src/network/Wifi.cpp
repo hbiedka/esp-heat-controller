@@ -11,7 +11,7 @@ ObjectModelSetterReturn SsidAndPasswdSetter::operator()(
     if (std::holds_alternative<std::string>(value)) {
         std::string strValue = std::get<std::string>(value);
         if (label == "ssid") {
-            //TODO validate ssid
+            //validate ssid
             if (strValue.size() < 8 || strValue.size() > 32) {
                 return ObjectModelSetterReturn::INVVAL;
             }
@@ -22,7 +22,7 @@ ObjectModelSetterReturn SsidAndPasswdSetter::operator()(
             }
             return ObjectModelSetterReturn::OK;
         } else if (label == "passwd" ) {
-            //TODO validate passwd
+            //validate passwd
             if (strValue.size() < 8 || strValue.size() > 64) {
                 return ObjectModelSetterReturn::INVVAL;
             }
@@ -44,7 +44,7 @@ WifiEngine::WifiEngine() :
 {
     omItems = {
         {"ssid", ObjectModelItem::createStringItem("", &ssidAndPasswdSetterFunctor, 32)},
-        {"passwd", ObjectModelItem::createStringItem("", &ssidAndPasswdSetterFunctor, 64)}
+        {"passwd", ObjectModelItem::createSecretStringItem("", &ssidAndPasswdSetterFunctor, 64)}
     };
 }
 
@@ -101,6 +101,7 @@ void WifiEngine::Spin(unsigned long ts)
             if (timeoutInterval > 0) {
                 // timeout
                 Serial.println("Wifi: connection timeout");
+                // TODO run hotspot mode
                 state = WifiState::DISCONNECTED;
             }
             else if (status == WL_CONNECTED) {
@@ -111,7 +112,12 @@ void WifiEngine::Spin(unsigned long ts)
             break;
 
         case WifiState::CONNECTED:
-            //TODO maintain connection
+            if (status != WL_CONNECTED) {
+                Serial.println("Wifi: disconnected");
+                state = WifiState::DISCONNECTED;
+                suspenseTs = ts + 1000;
+                break;
+            }
 
             suspenseTs = ts + 10000;
             break;

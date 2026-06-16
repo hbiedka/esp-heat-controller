@@ -42,6 +42,7 @@ struct ObjectModelItem {
     ObjectModelSetter *setter = nullptr; // Pointer to setter function for the item
     bool saveToNVM = false;              // Will be saved and restored from NVM
     size_t NVMStringLen = 0;             // how many bytes to reserve in NVM (for strings only)
+    bool secret = false;                 // if true, value will not be printed in debug output
 
     ObjectModelItem() = default;
     ObjectModelItem(ObjectModelItemValue val) : 
@@ -52,6 +53,8 @@ struct ObjectModelItem {
         value(val), setter(set), saveToNVM(save) {}
     ObjectModelItem(ObjectModelItemValue val, ObjectModelSetter *set, bool save, size_t nvmStrLen) : 
         value(val), setter(set), saveToNVM(save), NVMStringLen(nvmStrLen) {}
+    ObjectModelItem(ObjectModelItemValue val, ObjectModelSetter *set, bool save, size_t nvmStrLen, bool sec) : 
+        value(val), setter(set), saveToNVM(save), NVMStringLen(nvmStrLen), secret(sec) {}
 
     // Factory methods for creating ObjectModelItems
     static ObjectModelItem createStringItem(const std::string &str, ObjectModelSetter *setter) {
@@ -59,6 +62,14 @@ struct ObjectModelItem {
     }
     static ObjectModelItem createStringItem(const std::string &str, ObjectModelSetter *setter, size_t nvmStrLen) {
         return ObjectModelItem{str, setter, true, nvmStrLen};
+    }
+
+    static ObjectModelItem createSecretStringItem(const std::string &str, ObjectModelSetter *setter) {
+        return ObjectModelItem{str, setter, false, 0, true};
+    }
+
+    static ObjectModelItem createSecretStringItem(const std::string &str, ObjectModelSetter *setter, size_t nvmStrLen) {
+        return ObjectModelItem{str, setter, true, nvmStrLen, true};
     }
 
     static ObjectModelItem createIntItem(int value, ObjectModelSetter *setter, bool saveToNVM = false) {

@@ -13,7 +13,7 @@ std::string serializeValue(const ObjectModelItemValue &value) {
         return "\"" + std::get<std::string>(value) + "\""; // Uncomment if std::string has a method to get C-string
     }
 
-    return "<unknown>";
+    return "null";
 
 }
 
@@ -39,7 +39,9 @@ std::string ObjectModel::serialize() {
         result += "\"" + label + "\":";
         
         // Add value based on type
-        if (std::holds_alternative<ObjectModel*>(item.value)) {
+        if (item.secret) {
+            result += "null";
+        } else if (std::holds_alternative<ObjectModel*>(item.value)) {
             ObjectModel *linked_ob = std::get<ObjectModel*>(item.value);
             if (linked_ob != nullptr)
                 result += linked_ob->serialize();
@@ -309,6 +311,18 @@ ObjectModelSetterReturn ObjectModel::setProperty(const std::string &label, const
 
     if (it->second.setter == nullptr)
         return ObjectModelSetterReturn::READONLY;
+
+    // if string is too long, return TOO_MANY
+    if (it->second.NVMStringLen > 0
+            && std::holds_alternative<std::string>(value)
+            && std::holds_alternative<std::string>(it->second.value)
+        ) {
+        size_t newLen = std::get<std::string>(value).length();
+        size_t maxLen = it->second.NVMStringLen;
+        if (newLen > maxLen) {
+            return ObjectModelSetterReturn::TOO_MANY;
+        }
+    }
 
     ObjectModelSetterReturn ret = (*it->second.setter)(label,value);
     if (ret == ObjectModelSetterReturn::OK) {
