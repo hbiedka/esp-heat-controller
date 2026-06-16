@@ -14,7 +14,7 @@ class HttpServer {
 
         void begin();
         void handleObjectModelRoot();
-        void handleNotFound();
+        void handleFileFromFS();
     public:
         HttpServer(ObjectModel &root);
         void Spin(unsigned long ts);

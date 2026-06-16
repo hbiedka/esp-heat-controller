@@ -1,0 +1,53 @@
+<html>
+<head>
+    <title>Heat Controller Object Model</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Heat Controller Object Model</h1>
+    <p>This page provides an overview of the object model used in the Heat Controller project.
+    The object model defines how different components of the system interact and manage their data.</p>
+    <h2>ObjectModelItem Structure</h2>
+    <pre>
+struct ObjectModelItem {
+    std::variant<int, std::string, ObjectModel*> value; // The value can be an int, string, or a pointer to another ObjectModel
+    ObjectModelSetter* setter; // Pointer to a setter function for this item
+    bool saveToNVM; // Indicates whether this item should be saved to non-volatile memory
+    size_t nvmStrLen; // If this item is a string that should be saved to NVM, this indicates the maximum length
+    bool secret; // Indicates whether this item contains sensitive information (e.g., passwords)
+};
+    </pre>
+    <h2>ObjectModel Class</h2>
+    <pre>
+class ObjectModel {
+public:
+    std::map<std::string, ObjectModelItem> items; // Map of item labels to their corresponding ObjectModelItem
+    std::map<std::string, ObjectModel*> linkedObjects; // Map of labels to linked ObjectModels (for nested structures)
+};
+    </pre>
+    <h2>Example Usage</h2>
+    <p>In the Heat Controller project, the ObjectModel is used to represent various components
+such as WiFi settings, temperature sensors, and control parameters. Each component can have its own ObjectModel with specific items and linked objects.</p>
+    <pre>
+// Example of creating a WiFi ObjectModel
+ObjectModel wifiModel;
+wifiModel.items["ssid"] = ObjectModelItem::createStringItem("", &ssidSetter, true, 32);
+wifiModel.items["passwd"] = ObjectModelItem::createSecretStringItem("", &passwdSetter, true, 64);
+    </pre>
+    <p>In this example, the WiFi ObjectModel has two items: "ssid" and "passwd". The "ssid" is a regular string item that will be saved to NVM, while the "passwd" is a secret string item that will also be saved to NVM, but will be treated as sensitive information. The setter functions (e.g., &ssidSetter and &passwdSetter) are responsible for updating the values of these items when they are changed.</p>
+</body>
+</html>
