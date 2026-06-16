@@ -50,5 +50,7 @@ void loop() {
   pump2.Spin(ts);
   htr.Spin(ts);
 
+  wifi.Spin(ts);
+
 }
 

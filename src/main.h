@@ -54,6 +54,7 @@ LogicInput combined(LogicInputOperation::OR,{&in1,&in2});
 Heater pump1(PIN_PUMP1,in1.getStatePtr(),"Pump 1");
 Heater pump2(PIN_PUMP2,in2.getStatePtr(),"Pump 2");
 Heater htr(PIN_HEATER,combined.getStatePtr(),"Heater");
+WifiEngine wifi;
 
 std::vector<ObjectModel*> pumps{{&pump1,&pump2}};
 ObjectModelList pump_list{pumps};
@@ -61,6 +62,7 @@ ObjectModel omRoot{
     {
         {"pumps", ObjectModelItem{&pump_list}},
         {"heater", ObjectModelItem{&htr}},
+        {"wifi", ObjectModelItem{&wifi}}
     }
 };
 
