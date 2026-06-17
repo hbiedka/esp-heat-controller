@@ -26,10 +26,6 @@ static size_t toBlocks(size_t bytes)
     return blocks;
 }
 
-static void show() {
-    for(size_t i = 0; i < 64; i++)
-        Serial.printf("%d: 0x%x\n",i,EEPROM.read(i));
-}
 
 NVMem::NVMem(ObjectModel &om, size_t size) : om(om) {
     memory.resize(size);

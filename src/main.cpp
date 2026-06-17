@@ -3,12 +3,10 @@
 #include "util/interval.h"
 #include "main.h"
 
-const char degC_cstr[] = {127,'C','\0'};
-std::string degC{degC_cstr};
-
 DebugObjectModelWatcher serialP1Watcher("p1");
 DebugObjectModelWatcher serialP2Watcher("p2");
 DebugObjectModelWatcher serialHtrWatcher("htr");
+DebugObjectModelWatcher WifiStatusWatcher("wifi");
 
 void saveToEeprom()
 {
@@ -29,6 +27,7 @@ void setup() {
   pump1.AddWatcher("timeToNextState",&serialP1Watcher);
   pump2.AddWatcher("timeToNextState",&serialP2Watcher);
   htr.AddWatcher("timeToNextState",&serialHtrWatcher);
+  wifi.AddWatcher("state",&WifiStatusWatcher);
 
   oled.Init();
   mainScreen.Show();

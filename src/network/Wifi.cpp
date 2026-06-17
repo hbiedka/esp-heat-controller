@@ -44,7 +44,9 @@ WifiEngine::WifiEngine() :
 {
     omItems = {
         {"ssid", ObjectModelItem::createStringItem("", &ssidAndPasswdSetterFunctor, 32)},
-        {"passwd", ObjectModelItem::createSecretStringItem("", &ssidAndPasswdSetterFunctor, 64)}
+        {"passwd", ObjectModelItem::createSecretStringItem("", &ssidAndPasswdSetterFunctor, 64)},
+        {"state", ObjectModelItem{ ObjectModelItemValue{0} }},
+        {"ip" , ObjectModelItem{ ObjectModelItemValue{std::string("0.0.0.0")} }}
     };
 }
 
@@ -58,8 +60,6 @@ void WifiEngine::TryConnect()
     std::string passwd = std::get<std::string>(omItems["passwd"].value);
     if (ssid.empty() ||passwd.empty())
         return;
-
-    Serial.printf("Trying to connect to wifi with ssid '%s' and passwd '%s'\n", ssid.c_str(), passwd.c_str());
 
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid.c_str(), passwd.c_str());
@@ -82,7 +82,6 @@ void WifiEngine::Spin(unsigned long ts)
     if (interval < 0) return;
 
     auto status = WiFi.status();
-    // Serial.printf("%lu, state %d, status code %d\n", ts, (int)state, status);
 
     switch(state) {
         case WifiState::DISCONNECTED:
@@ -105,7 +104,8 @@ void WifiEngine::Spin(unsigned long ts)
                 state = WifiState::DISCONNECTED;
             }
             else if (status == WL_CONNECTED) {
-                Serial.println("Wifi: connected");
+                Serial.println("Wifi: connected. IP: "+WiFi.localIP().toString());
+                updateLocalProperty("ip", std::string(WiFi.localIP().toString().c_str()));
                 state = WifiState::CONNECTED;
             }
             suspenseTs = ts + 500;
@@ -122,4 +122,7 @@ void WifiEngine::Spin(unsigned long ts)
             suspenseTs = ts + 10000;
             break;
     }
+
+    //update Object Model
+    updateLocalProperty("state", static_cast<int>(state));
 }
