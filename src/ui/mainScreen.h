@@ -17,7 +17,7 @@ static UiBlock label{{
 }};
 
 static const std::vector<UiTemplateEntry> uiTemplate{
-    {htrStatus,0,6},    //label
+    {label,0,6},    //label
     {htrStatus,0,0},    //p1
     {htrStatus,0,2},    //p2
     {htrStatus,0,4},    //htr
@@ -37,12 +37,12 @@ class MainScreen :
 
         ObjectModel &om;
 
+        void handleObjectModelChange(const std::string &property, const std::string &context, const ObjectModelItem &item);
         void ShowTimeToNextState(unsigned int index, int val);
         void ShowState(unsigned int index, int val);
 
     public:
-        friend class HeaterStateWatcher;
-        friend class HeaterTimeToNextStateWatcher;
+        friend class MainScreenWatcher;
 
         MainScreen(Ui &_ui, NavigativeScreen *_menu, ObjectModel &_om);
 
@@ -51,30 +51,18 @@ class MainScreen :
         void ButtonCallback(uint8_t id, bool hold) override;
 };
 
-class HeaterStateWatcher : public ObjectModelWatcher
+class MainScreenWatcher : public ObjectModelWatcher
 {
     private:
         MainScreen *host;
-        unsigned int heaterId;
     public:
-        HeaterStateWatcher(MainScreen *_host, unsigned int id) :
-            host(_host),
-            heaterId(id)
+        MainScreenWatcher(MainScreen *_host) :
+            host(_host)
         {};
-        void operator()(const std::string &property, const ObjectModelItem &item);
-};
-
-class HeaterTimeToNextStateWatcher : public ObjectModelWatcher
-{
-    private:
-        MainScreen *host;
-        unsigned int heaterId;
-    public:
-        HeaterTimeToNextStateWatcher(MainScreen *_host, unsigned int id) :
-            host(_host),
-            heaterId(id)
-        {};
-        void operator()(const std::string &property, const ObjectModelItem &item);
+        void operator()(
+            const std::string &property,
+            const std::string &context,
+            const ObjectModelItem &item) override;
 };
 
 #endif

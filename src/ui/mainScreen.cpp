@@ -1,31 +1,27 @@
 #include "mainScreen.h"
 #include "../heat/heater.h"
 
-void HeaterStateWatcher::operator()(const std::string &property, const ObjectModelItem &item)
+void MainScreenWatcher::operator()(
+            const std::string &property,
+            const std::string &context,
+            const ObjectModelItem &item)
 {
     if (!host) return;  //TODO throw exception
-    if (!std::holds_alternative<int>(item.value)) return; //TODO throw exception
-    host->ShowState(heaterId,std::get<int>(item.value));
-};
-
-void HeaterTimeToNextStateWatcher::operator()(const std::string &property, const ObjectModelItem &item)
-{
-    if (!host) return;  //TODO throw exception
-    if (!std::holds_alternative<int>(item.value)) return; //TODO throw exception
-    host->ShowTimeToNextState(heaterId,std::get<int>(item.value));
-};
+    host->handleObjectModelChange(property, context, item);
+}
 
 MainScreen::MainScreen(Ui &_ui, NavigativeScreen *_menu,ObjectModel &_om):
     ui(_ui),
     menu(_menu),
     om(_om)
 {
-    om["pumps"][0].AddWatcher("state",new HeaterStateWatcher(this,1));
-    om["pumps"][1].AddWatcher("state",new HeaterStateWatcher(this,2));
-    om["heater"].AddWatcher("state",new HeaterStateWatcher(this,3));
-    om["pumps"][0].AddWatcher("timeToNextState",new HeaterTimeToNextStateWatcher(this,1));
-    om["pumps"][1].AddWatcher("timeToNextState",new HeaterTimeToNextStateWatcher(this,2));
-    om["heater"].AddWatcher("timeToNextState",new HeaterTimeToNextStateWatcher(this,3));
+    om["pumps"]["0"].AddWatcher("state","pumps/0/state",new MainScreenWatcher(this));
+    om["pumps"]["1"].AddWatcher("state","pumps/1/state",new MainScreenWatcher(this));
+    om["heater"].AddWatcher("state","heater/state",new MainScreenWatcher(this));
+    om["pumps"]["0"].AddWatcher("timeToNextState","pumps/0/timeToNextState",new MainScreenWatcher(this));
+    om["pumps"]["1"].AddWatcher("timeToNextState","pumps/1/timeToNextState",new MainScreenWatcher(this));
+    om["heater"].AddWatcher("timeToNextState","heater/timeToNextState",new MainScreenWatcher(this));
+    om["wifi"].AddWatcher("state","wifi/state",new MainScreenWatcher(this));
 }
 
 void MainScreen::Show() {
@@ -57,6 +53,48 @@ void MainScreen::buttonEnter() {
 
 void MainScreen::ButtonCallback(uint8_t id, bool hold) {
     if (id == 2 && !hold) buttonEnter();
+}
+
+void MainScreen::handleObjectModelChange(const std::string &property, const std::string &context, const ObjectModelItem &item)
+{
+    if (!shown) return;
+    //check property type
+    if (!std::holds_alternative<int>(item.value)) return; //TODO throw exception
+
+    if (context == "pumps/0/state") {
+        ShowState(1,std::get<int>(item.value));
+    }
+    else if (context == "pumps/1/state") {
+        ShowState(2,std::get<int>(item.value));
+    }
+    else if (context == "heater/state") {
+        ShowState(3,std::get<int>(item.value));
+    }
+    else if (context == "pumps/0/timeToNextState") {
+        ShowTimeToNextState(1,std::get<int>(item.value));
+    }
+    else if (context == "pumps/1/timeToNextState") {
+        ShowTimeToNextState(2,std::get<int>(item.value));
+    }
+    else if (context == "heater/timeToNextState") {
+        ShowTimeToNextState(3,std::get<int>(item.value));
+    }
+    else if (context == "wifi/state") {
+        int state = std::get<int>(item.value);
+        ui[0][0].Clear();
+        switch(state) {
+            case 0:
+                ui[0][0].Print("WiFi: disconnected");
+                break;
+            case 1:
+            case 2:
+                ui[0][0].Print("WiFi: connecting");
+                break;
+            case 3:
+                ui[0][0].Print("WiFi: connected");
+                break;
+        }
+    }
 }
 
 void MainScreen::ShowTimeToNextState(unsigned int index, int val) {
