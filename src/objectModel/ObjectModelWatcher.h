@@ -13,19 +13,26 @@ struct ObjectModelWatcherItem {
 class ObjectModelWatcher {
     public:
         virtual ~ObjectModelWatcher() = default;
-        virtual void operator()(const std::string &property, const ObjectModelItem &item) = 0;
-        virtual void operator()(const std::string &property, const std::string &context, const ObjectModelItem &item) {
+        virtual void operator()(
+            const std::string &property,
+            const ObjectModelItem &item)
+        {}
+        virtual void operator()(
+            const std::string &property,
+            const std::string &context,
+            const ObjectModelItem &item)
+        {
             // default implementation ignores context, can be overridden by derived classes if needed
             operator()(property, item);
         }
 };
 
 class DebugObjectModelWatcher : public ObjectModelWatcher {
-    private:
-        std::string label;
     public:
-        DebugObjectModelWatcher(const std::string &_label);
-        void operator()(const std::string &property, const ObjectModelItem &item) override;
+        void operator()(
+            const std::string &property,
+            const std::string &context,
+            const ObjectModelItem &item) override;
 };
 
 #endif

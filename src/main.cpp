@@ -3,10 +3,7 @@
 #include "util/interval.h"
 #include "main.h"
 
-DebugObjectModelWatcher serialP1Watcher("p1");
-DebugObjectModelWatcher serialP2Watcher("p2");
-DebugObjectModelWatcher serialHtrWatcher("htr");
-DebugObjectModelWatcher WifiStatusWatcher("wifi");
+DebugObjectModelWatcher debugWatcher;
 
 void saveToEeprom()
 {
@@ -21,13 +18,13 @@ void setup() {
 
   Serial.begin(9600);
 
-  pump1.AddWatcher("state",&serialP1Watcher);
-  pump2.AddWatcher("state",&serialP2Watcher);
-  htr.AddWatcher("state",&serialHtrWatcher);
-  pump1.AddWatcher("timeToNextState",&serialP1Watcher);
-  pump2.AddWatcher("timeToNextState",&serialP2Watcher);
-  htr.AddWatcher("timeToNextState",&serialHtrWatcher);
-  wifi.AddWatcher("state",&WifiStatusWatcher);
+  pump1.AddWatcher("state","pump1/state",&debugWatcher);
+  pump2.AddWatcher("state","pump2/state",&debugWatcher);
+  htr.AddWatcher("state","htr/state",&debugWatcher);
+  pump1.AddWatcher("timeToNextState","pump1/timeToNextState",&debugWatcher);
+  pump2.AddWatcher("timeToNextState","pump2/timeToNextState",&debugWatcher);
+  htr.AddWatcher("timeToNextState","htr/timeToNextState",&debugWatcher);
+  wifi.AddWatcher("state","wifi/state",&debugWatcher);
 
   oled.Init();
   mainScreen.Show();
