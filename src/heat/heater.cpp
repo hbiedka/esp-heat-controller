@@ -72,8 +72,6 @@ void Heater::Spin(unsigned long ts) {
     updateLocalProperty("state",static_cast<int>(state));
     updateLocalProperty("timeToNextState",time_to_next_state);
     updateLocalProperty("on",state == ON || state == DELAY_TO_OFF);
-    updateLocalProperty("delayToOn",static_cast<int>(delay_to_on));
-    updateLocalProperty("delayToOff",static_cast<int>(delay_to_off));
 }
 
 ObjectModelSetterReturn HeaterDelaySetter::operator()(const std::string &label, const ObjectModelItemValue &value)
