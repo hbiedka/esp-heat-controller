@@ -6,6 +6,16 @@
 
 using WatcherMap = std::vector<ObjectModelWatcherItem>;
 
+// Default setter which passes all set values
+class WritingSetter : public ObjectModelSetter {
+    ObjectModelSetterReturn operator()(
+        const std::string &label,
+        const ObjectModelItemValue &value) override
+        {
+            return ObjectModelSetterReturn::OK;
+        }
+};
+
 class ObjectModel {
     private:
         WatcherMap watchers;
