@@ -1,5 +1,15 @@
 #include "ObjectModel.h"
 #include <stdexcept>
+#include <cwctype>  //for iswspace
+
+enum deserializatorState {
+    FIND_OBJ_BEGIN = 0,
+    FIND_LABEL,
+    FIND_COLON,
+    FIND_VALUE,
+    FIND_COMMA_OR_END
+};
+
 
 std::string serializeValue(const ObjectModelItemValue &value) {
     if (std::holds_alternative<bool>(value)) {
@@ -58,8 +68,173 @@ std::string ObjectModel::serialize() {
 
 ObjectModelSetterReturn ObjectModel::deserialize(const std::string &patch)
 {
-    //TODO implement
-    return ObjectModelSetterReturn::NOT_IMPLEMENTED;
+    std::string::const_iterator newEnd;
+    return deserialize(patch.begin(),patch.end(),newEnd);
+}
+
+
+ObjectModelSetterReturn ObjectModel::deserialize(
+    std::string::const_iterator begin,
+    std::string::const_iterator end,
+    std::string::const_iterator &it
+)
+{
+    it = begin;
+    deserializatorState state = FIND_OBJ_BEGIN;
+    std::string label;
+
+    while (it != end)
+    {
+        //filter all whitespaces
+        if (!std::iswspace(*it)) {
+            if (state == FIND_OBJ_BEGIN) {
+                //must start from {
+                if (*it != '{')
+                    return ObjectModelSetterReturn::SYNTAX_ERROR;
+
+                state = FIND_LABEL;
+            } else if (state == FIND_LABEL) {
+                if (*it != '"')
+                    return ObjectModelSetterReturn::SYNTAX_ERROR;
+                it++;
+                auto endQuoteIt = std::find(it,end,'"');
+
+                //if empty label
+                if (endQuoteIt == it)
+                    return ObjectModelSetterReturn::INVLABEL;
+                //no closing
+                if (endQuoteIt == end)
+                    return ObjectModelSetterReturn::SYNTAX_ERROR;
+
+                //create substring
+                label = std::string(it,endQuoteIt);
+
+                //Move it to end of label
+                it = endQuoteIt;
+                state = FIND_COLON;
+            } else if (state == FIND_COLON) {
+                if (*it != ':')
+                    return ObjectModelSetterReturn::SYNTAX_ERROR;
+                state = FIND_VALUE;
+            } else if (state == FIND_VALUE) {
+
+                // first, recognize value
+                auto item = omItems.find(label);
+
+                // if no label like this
+                if (item == omItems.end())
+                    return ObjectModelSetterReturn::INVLABEL;
+
+                ObjectModelItemValue &value = item->second.value;
+
+                if (std::holds_alternative<ObjectModel*>(value)) {
+                    ObjectModel *linked_ob = std::get<ObjectModel*>(value);
+                    if (linked_ob != nullptr) {
+                        std::string::const_iterator newEnd;
+                        auto ret = linked_ob->deserialize(it,end,newEnd);
+
+                        if (ret != ObjectModelSetterReturn::OK)
+                            return ret;
+
+                        if (newEnd == it || newEnd == end)
+                            return ObjectModelSetterReturn::SYNTAX_ERROR;
+
+                        it = newEnd;    //should point to }
+                    }
+                    //TODO wat if nullptr?
+                } else if (std::holds_alternative<bool>(value)) {
+                    // can take 0,1 or true/false
+                    auto booleanEnd = std::find_if_not(it,end,
+                        [](char c){ return std::isalpha(c) || c == '0' || c == '1'; }
+                    );
+
+                    if (booleanEnd == it || booleanEnd == end)
+                        return ObjectModelSetterReturn::SYNTAX_ERROR;
+                    std::string booleanStr(it,booleanEnd);
+
+                    if (booleanStr != "0" && booleanStr != "1"
+                        && booleanStr != "true" && booleanStr != "false"
+                    ) return ObjectModelSetterReturn::INVVAL;
+
+                    bool value = booleanStr == "1" || booleanStr == "true";
+
+                    auto ret = setProperty(label,value);
+                    if (ret != ObjectModelSetterReturn::OK)
+                        return ret;
+
+                    // We need to set iterator at the last digit to be
+                    // increased at the end of iteration
+                    it = booleanEnd -1;
+
+                } else if (std::holds_alternative<int>(value)) {
+                    auto numEnd = std::find_if_not(it,end,
+                        [](char c){ return std::isdigit(c) || c == '-'; }
+                    );
+
+                    if (numEnd == it || numEnd == end)
+                        return ObjectModelSetterReturn::SYNTAX_ERROR;
+
+                    std::string numStr(it,numEnd);
+
+                    // must be initialized some way
+                    int num = 0;
+                    try {
+                        num = stoi(numStr);
+                    } catch (std::invalid_argument& e) {
+                        return ObjectModelSetterReturn::INVVAL;
+                    }
+
+                    auto ret = setProperty(label,num);
+                    if (ret != ObjectModelSetterReturn::OK)
+                        return ret;
+
+                    // We need to set iterator at the last digit to be
+                    // increased at the end of iteration
+                    it = numEnd -1;
+                } else if (std::holds_alternative<std::string>(value)) {
+                    if (*it != '"')
+                        return ObjectModelSetterReturn::SYNTAX_ERROR;
+                    it++;
+                    auto endQuoteIt = std::find(it,end,'"');
+
+                    //if no closing
+                    if (endQuoteIt == end)
+                        return ObjectModelSetterReturn::SYNTAX_ERROR;
+                    // NOTE: empty strings are accepted
+
+                    auto ret = setProperty(label,std::string(it,endQuoteIt));
+                    if (ret != ObjectModelSetterReturn::OK)
+                        return ret;
+
+                    //Move it to end of string
+                    it = endQuoteIt;
+                } else {
+                    Serial.printf("unknown type of %s\n",label.c_str());
+                }
+
+                state = FIND_COMMA_OR_END;
+            } else if (state == FIND_COMMA_OR_END) {
+                if (*it == ',') {
+                    // continue
+                    state = FIND_LABEL;
+                } else if (*it == '}') {
+                    //finish with iterator pointing at the closing bracket
+                    return ObjectModelSetterReturn::OK;
+                } else {
+                    // something wrong
+                    return ObjectModelSetterReturn::SYNTAX_ERROR;
+                }
+
+            } else {
+                return ObjectModelSetterReturn::SYNTAX_ERROR;
+            }
+        }
+        //always move to next char
+        it++;
+    }
+
+    //here if syntax error
+    return ObjectModelSetterReturn::SYNTAX_ERROR;
 }
 
 //load from NVM payload

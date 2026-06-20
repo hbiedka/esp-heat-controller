@@ -17,8 +17,14 @@ class ObjectModel {
         ObjectModel() = default;
         ObjectModel(const ObjectModelItemMap &items) : omItems(items) {};
         virtual ObjectModelItemMap &getObjectModel(){ return omItems; };
+
         std::string serialize();
         ObjectModelSetterReturn deserialize(const std::string &patch);
+        ObjectModelSetterReturn deserialize(
+            std::string::const_iterator cbegin,
+            std::string::const_iterator cend,
+            std::string::const_iterator &newEnd
+        );
 
         std::vector<unsigned char>::iterator NVMLoad(std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator end);
         std::vector<unsigned char>::iterator NVMDump(std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator end);

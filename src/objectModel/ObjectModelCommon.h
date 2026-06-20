@@ -24,6 +24,7 @@ enum class ObjectModelSetterReturn {
     INVFUNC,
     READONLY,
     TOO_MANY,
+    SYNTAX_ERROR,
     NOT_IMPLEMENTED
 };
 
@@ -79,8 +80,7 @@ struct ObjectModelItem {
     static ObjectModelItem createBoolItem(bool value, ObjectModelSetter *setter, bool saveToNVM = false) {
         return ObjectModelItem{value, setter, saveToNVM};
     }
-
-    };
+};
 
 using ObjectModelItemMap = std::map<std::string, ObjectModelItem>;
 
