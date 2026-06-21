@@ -14,7 +14,7 @@ void LogicInput::Spin(unsigned long ts)
         case LogicInputOperation::OR:
             state = false;
             for (auto* in : inputs) {
-                state |= in->getStatePtr()[0];
+                state |= in->getState();
                 if (state) break;
             }
             break;
@@ -22,7 +22,7 @@ void LogicInput::Spin(unsigned long ts)
         case LogicInputOperation::AND:
             state = true;
             for (auto* in : inputs) {
-                state &= in->getStatePtr()[0];
+                state &= in->getState();
                 if (!state) break;
             }
             break;

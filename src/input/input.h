@@ -9,6 +9,9 @@ class Input
     public:
         virtual ~Input() = default;
         virtual void Spin(unsigned long ts) = 0;   // czysto wirtualna (bo zależna od hardware)
+        virtual bool getState() {
+            return state;
+        }
         virtual bool* getStatePtr()
         {
             return &state;
@@ -23,6 +26,9 @@ class AnalogInput
     public:
         virtual ~AnalogInput() = default;
         virtual void Spin(unsigned long ts) = 0;
+        virtual unsigned int getState() {
+            return state;
+        }
         virtual unsigned int* getStatePtr()
         {
             return &state;
