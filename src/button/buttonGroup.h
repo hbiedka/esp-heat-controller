@@ -3,12 +3,15 @@
 
 #include "button.h"
 #include <vector>
+#include <memory>
 
 class ButtonGroup {
     private:
-        std::vector<RLadderButton> buttons;
+        std::vector<std::shared_ptr<Button>> buttons;
     public:
-        ButtonGroup(std::vector<RLadderButton> _buttons) : buttons(_buttons) {}
+        ButtonGroup(std::vector<std::shared_ptr<Button>> _buttons) :
+            buttons(_buttons)
+        {}
         void Spin(unsigned long ts);
         void setCallbackForId(uint8_t id, void (*cb)(uint8_t));
         void setCallbackForAll(void (*cb)(uint8_t));
@@ -18,24 +21,20 @@ class ButtonGroup {
         void setUnifiedCallbackForAll(void (*cb)(uint8_t,bool));
         void assignInteractiveObject(ButtonInteractive* obj);
 
-        RLadderButton *getButton(uint8_t id) {
+        std::optional<std::shared_ptr<Button>> getButton(uint8_t id) {
             for (auto &b : buttons) {
-                if (b.getId() == id) {
-                    return &b;
+                if (b->getId() == id) {
+                    return b;
                 }
             }
-            return nullptr;
-        }
-
-        BtnState getPanelState(uint8_t id) { 
-            RLadderButton *b = getButton(id);
-            if (b == nullptr) return UNDEFINED;
-            return b->btn_state;
+            return std::nullopt;
         }
 
         bool isPressed(uint8_t id) {
-            RLadderButton *b = getButton(id);
-            if (b == nullptr) return false;
+            auto maybeB = getButton(id);
+            if (!maybeB) return false;
+            auto b = *maybeB;
+
             return b->btn_state == PRESSED || b->btn_state == HOLD;
         }
 };

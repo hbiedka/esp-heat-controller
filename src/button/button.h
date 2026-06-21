@@ -7,8 +7,7 @@ enum BtnState {
     RELEASED = 0,
     WAIT_FOR_PRESS,
     PRESSED,
-    HOLD,
-    UNDEFINED   //used by getPanelState to indicate that button with given id was not found
+    HOLD
 };
 
 class ButtonInteractive
@@ -18,12 +17,9 @@ public:
     virtual void ButtonCallback(uint8_t id, bool hold) = 0;
 };
 
-class RLadderButton {
-    private:
+class Button {
+    protected:
         uint8_t id = 0;
-        unsigned int *state = nullptr;
-        unsigned int thr_low = 0;
-        unsigned int  thr_high = 0;
 
         unsigned int t_press = 40; //short press time
         unsigned int t_hold = 500; //hold press time
@@ -45,29 +41,26 @@ class RLadderButton {
         // Ptr to object which proviedes button callback
         ButtonInteractive* interactiveObject = nullptr;
 
-    protected:
         void CommitState(bool s);
     public:
         BtnState btn_state = RELEASED;
 
         uint8_t getId() { return id; };
 
-        RLadderButton(uint8_t _id,unsigned int *_state, unsigned int _thr_low, unsigned int _thr_high) : 
-            id(_id),
-            state(_state),
-            thr_low(_thr_low),
-            thr_high(_thr_high)
+        Button(uint8_t _id) :
+            id(_id)
         {};
 
-        //TODO destructor / copy constructor /asignment op?
+        virtual ~Button() = default;
 
-        bool GetState();
-        void Spin(unsigned long ts);
+        virtual bool GetState() = 0;
+        virtual void Spin(unsigned long ts);
 
-        void setPressCb(void (*cb)(uint8_t));
-        void setHoldCb(void (*cb)(uint8_t));
-        void setCb(void (*cb)(uint8_t,bool));
-        void assignInteractiveObject(ButtonInteractive* obj);
+        virtual void setPressCb(void (*cb)(uint8_t));
+        virtual void setHoldCb(void (*cb)(uint8_t));
+        virtual void setCb(void (*cb)(uint8_t,bool));
+        virtual void assignInteractiveObject(ButtonInteractive* obj);
 };
+
 
 #endif

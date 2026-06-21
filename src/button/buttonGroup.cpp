@@ -2,14 +2,14 @@
 
 void ButtonGroup::Spin(unsigned long ts) {
     for (auto &b : buttons) {
-        b.Spin(ts);
+        b->Spin(ts);
     }
 }
 
 void ButtonGroup::setCallbackForId(uint8_t id, void (*cb)(uint8_t)) {
     for (auto &b : buttons) {
-        if (b.getId() == id) {
-            b.setPressCb(cb);
+        if (b->getId() == id) {
+            b->setPressCb(cb);
             break;
         }
     }
@@ -17,14 +17,14 @@ void ButtonGroup::setCallbackForId(uint8_t id, void (*cb)(uint8_t)) {
 
 void ButtonGroup::setCallbackForAll(void (*cb)(uint8_t)) {
     for (auto &b : buttons) {
-        b.setPressCb(cb);
+        b->setPressCb(cb);
     }
 }
 
 void ButtonGroup::setHoldCallbackForId(uint8_t id, void (*cb)(uint8_t)) {
     for (auto &b : buttons) {
-        if (b.getId() == id) {
-            b.setHoldCb(cb);
+        if (b->getId() == id) {
+            b->setHoldCb(cb);
             break;
         }
     }
@@ -32,14 +32,14 @@ void ButtonGroup::setHoldCallbackForId(uint8_t id, void (*cb)(uint8_t)) {
 
 void ButtonGroup::setHoldCallbackForAll(void (*cb)(uint8_t)) {
     for (auto &b : buttons) {
-        b.setHoldCb(cb);
+        b->setHoldCb(cb);
     }
 }
 
 void ButtonGroup::setUnifiedCallbackForId(uint8_t id, void (*cb)(uint8_t,bool)) {
     for (auto &b : buttons) {
-        if (b.getId() == id) {
-            b.setCb(cb);
+        if (b->getId() == id) {
+            b->setCb(cb);
             break;
         }
     }
@@ -47,12 +47,12 @@ void ButtonGroup::setUnifiedCallbackForId(uint8_t id, void (*cb)(uint8_t,bool)) 
 
 void ButtonGroup::setUnifiedCallbackForAll(void (*cb)(uint8_t,bool)) {
     for (auto &b : buttons) {
-        b.setCb(cb);
+        b->setCb(cb);
     }
 }
 
 void ButtonGroup::assignInteractiveObject(ButtonInteractive* obj) {
     for (auto &b : buttons) {
-        b.assignInteractiveObject(obj);
+        b->assignInteractiveObject(obj);
     }
 }

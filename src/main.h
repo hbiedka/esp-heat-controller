@@ -2,7 +2,7 @@
 #define MAIN_H
 
 #include <Arduino.h>
-#include "button/button.h"
+#include "button/rLadderButton.h"
 #include "button/buttonGroup.h"
 #include "util/selftest.h"
 #include "input/externalInput.h"
@@ -36,14 +36,11 @@
 
 #define PIN_ADC_RESISTOR_LADDER 0
 
-//init buttons
-// uint16_t resistor_ladder_out = 0;
-AnalogExternalInput resistorLadderButtons(PIN_ADC_RESISTOR_LADDER);
-
+auto resistorLadder = std::make_shared<AnalogExternalInput>(PIN_ADC_RESISTOR_LADDER);
 ButtonGroup panel({
-    RLadderButton(1,resistorLadderButtons.getStatePtr(),100,150),
-    RLadderButton(2,resistorLadderButtons.getStatePtr(),350,400),
-    RLadderButton(3,resistorLadderButtons.getStatePtr(),550,600)
+    std::make_shared<RLadderButton>(1,resistorLadder,100,150),
+    std::make_shared<RLadderButton>(2,resistorLadder,350,400),
+    std::make_shared<RLadderButton>(3,resistorLadder,550,600)
 });
 
 std::vector<uint8_t> outputs{PIN_PUMP1,PIN_PUMP2,PIN_HEATER};

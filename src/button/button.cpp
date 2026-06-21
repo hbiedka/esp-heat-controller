@@ -1,17 +1,10 @@
 #include "button.h"
 
-bool RLadderButton::GetState() {
-    if (state == nullptr) return false;
-
-    bool pressed = (*state > thr_low && *state < thr_high);
-    return pressed;
-}
-
-void RLadderButton::CommitState(bool s) {
+void Button::CommitState(bool s) {
     last_pressed = s;
 }
 
-void RLadderButton::Spin(unsigned long ts) {
+void Button::Spin(unsigned long ts) {
 
     bool pressed = GetState();
 
@@ -31,7 +24,7 @@ void RLadderButton::Spin(unsigned long ts) {
                 if (interactiveObject != nullptr) interactiveObject->ButtonCallback(id,false);
 
                 state_ts = ts;  //reset state_ts to wait to hold
-                
+
             } else if (!pressed) {
                 btn_state = RELEASED;
             }
@@ -78,22 +71,22 @@ void RLadderButton::Spin(unsigned long ts) {
 //if press/hold callbacks set, the unified callback is revoked
 //if unified callback set, both press/hold callbacks are revoked
 
-void RLadderButton::setPressCb(void (*cb)(uint8_t)) {
+void Button::setPressCb(void (*cb)(uint8_t)) {
     unified_cb = nullptr;
     press_cb = cb;
 }
 
-void RLadderButton::setHoldCb(void (*cb)(uint8_t)) {
+void Button::setHoldCb(void (*cb)(uint8_t)) {
     unified_cb = nullptr;
     hold_cb = cb;
 }
 
-void RLadderButton::setCb(void (*cb)(uint8_t,bool)) {
+void Button::setCb(void (*cb)(uint8_t,bool)) {
     press_cb = nullptr;
     hold_cb = nullptr;
     unified_cb = cb;
 }
 
-void RLadderButton::assignInteractiveObject(ButtonInteractive* obj) {
+void Button::assignInteractiveObject(ButtonInteractive* obj) {
     interactiveObject = obj;
 }
