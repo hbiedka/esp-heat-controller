@@ -42,9 +42,24 @@ void HttpServer::handleFileFromFS() {
 
 void HttpServer::handleObjectModelRoot() {
     // TODO consider sending in chunks if response is too big
-    Serial.println("RQ from " + server.client().remoteIP().toString() + ": " + server.uri());
+    Serial.println("RQ from " + server.client().remoteIP().toString() + ": GET " + server.uri());
     std::string response = omRoot.serialize();
     server.send(200, "application/json", response.c_str());
+}
+
+void HttpServer::handleObjectModelRootPatch() {
+    Serial.println("RQ from " + server.client().remoteIP().toString() + ": PATCH" + server.uri());
+    String body = server.arg("plain");
+    auto result = omRoot.deserialize(body.c_str());
+    if (result != ObjectModelSetterReturn::OK) {
+        server.send(400, "text/plain",
+            "Failed to deserialize object model patch (error code: " + String((int)result) + ")");
+        return;
+    }
+    std::string response = omRoot.serialize();
+    server.send(200, "application/json", response.c_str());
+
+    //TODO trigger save to EEPROM
 }
 
 void HttpServer::begin() {
@@ -53,7 +68,8 @@ void HttpServer::begin() {
         return;
     }
 
-    server.on("/api/object-model", std::bind(&HttpServer::handleObjectModelRoot, this));
+    server.on("/api/object-model", HTTP_GET, std::bind(&HttpServer::handleObjectModelRoot, this));
+    server.on("/api/object-model", HTTP_PATCH, std::bind(&HttpServer::handleObjectModelRootPatch, this));
     server.onNotFound(std::bind(&HttpServer::handleFileFromFS, this));
     server.begin();
     initialized = true;

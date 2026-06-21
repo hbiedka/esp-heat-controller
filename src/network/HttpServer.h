@@ -14,6 +14,7 @@ class HttpServer {
 
         void begin();
         void handleObjectModelRoot();
+        void handleObjectModelRootPatch();
         void handleFileFromFS();
     public:
         HttpServer(ObjectModel &root);
