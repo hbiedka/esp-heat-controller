@@ -1,54 +1,31 @@
 #include "buttonGroup.h"
 
+ButtonGroup::ButtonGroup(std::vector<std::shared_ptr<Button>> _buttons) :
+    buttons(_buttons)
+{}
+
 void ButtonGroup::Spin(unsigned long ts) {
     for (auto &b : buttons) {
         b->Spin(ts);
     }
 }
 
-void ButtonGroup::setCallbackForId(uint8_t id, void (*cb)(uint8_t)) {
+std::optional<std::shared_ptr<Button>>
+ButtonGroup::getButton(uint8_t id) {
     for (auto &b : buttons) {
         if (b->getId() == id) {
-            b->setPressCb(cb);
-            break;
+            return b;
         }
     }
+    return std::nullopt;
 }
 
-void ButtonGroup::setCallbackForAll(void (*cb)(uint8_t)) {
-    for (auto &b : buttons) {
-        b->setPressCb(cb);
-    }
-}
+bool ButtonGroup::isPressed(uint8_t id) {
+    auto maybeB = getButton(id);
+    if (!maybeB) return false;
+    auto b = *maybeB;
 
-void ButtonGroup::setHoldCallbackForId(uint8_t id, void (*cb)(uint8_t)) {
-    for (auto &b : buttons) {
-        if (b->getId() == id) {
-            b->setHoldCb(cb);
-            break;
-        }
-    }
-}
-
-void ButtonGroup::setHoldCallbackForAll(void (*cb)(uint8_t)) {
-    for (auto &b : buttons) {
-        b->setHoldCb(cb);
-    }
-}
-
-void ButtonGroup::setUnifiedCallbackForId(uint8_t id, void (*cb)(uint8_t,bool)) {
-    for (auto &b : buttons) {
-        if (b->getId() == id) {
-            b->setCb(cb);
-            break;
-        }
-    }
-}
-
-void ButtonGroup::setUnifiedCallbackForAll(void (*cb)(uint8_t,bool)) {
-    for (auto &b : buttons) {
-        b->setCb(cb);
-    }
+    return b->btn_state == PRESSED || b->btn_state == HOLD;
 }
 
 void ButtonGroup::assignInteractiveObject(ButtonInteractive* obj) {
