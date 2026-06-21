@@ -5,7 +5,7 @@
 #include <vector>
 #include "button/buttonGroup.h"
 
-class Selftest {
+class Selftest : public ButtonInteractive {
     private:
         std::vector<uint8_t> &outputs;
         std::vector<uint8_t>::iterator outputs_iter;
@@ -15,12 +15,11 @@ class Selftest {
 
     public:
         Selftest(std::vector<uint8_t>& _outputs, ButtonGroup *_panel);
+        void Init();
         void Spin();
         uint8_t ReadButtons();
+        void ButtonCallback(uint8_t id, bool hold) override;
 
 };
-
-void sendBtnPress(uint8_t btn_id);
-void sendBtnHold(uint8_t btn_id);
 
 #endif  // SELFTEST_H

@@ -4,11 +4,13 @@ Selftest::Selftest(std::vector<uint8_t>& _outputs, ButtonGroup *_panel)
   : outputs(_outputs), panel(_panel)
   {
       outputs_iter = outputs.begin();
-      if (panel != nullptr) {
-          panel->setCallbackForAll(sendBtnPress);
-          panel->setHoldCallbackForAll(sendBtnHold);
-      }
   }
+
+void Selftest::Init() {
+  if (panel != nullptr) {
+    panel->assignInteractiveObject(this);
+  }
+}
 
 void Selftest::Spin() {
     if (panel == nullptr) return;
@@ -26,6 +28,11 @@ void Selftest::Spin() {
     }
 }
 
+void Selftest::ButtonCallback(uint8_t id, bool hold) {
+    Serial.printf("Button %d ",id);
+    Serial.println(hold ? "hold" : "press");
+}
+
 uint8_t Selftest::ReadButtons() {
     if (panel == nullptr) return 0;
 
@@ -34,12 +41,4 @@ uint8_t Selftest::ReadButtons() {
     if (panel->isPressed(3)) return 3;
   
   return 0;
-}
-
-void sendBtnPress(uint8_t btn_id) {
-  Serial.printf("Button %d pressed\n", btn_id);
-}
-
-void sendBtnHold(uint8_t btn_id) {
-  Serial.printf("Button %d hold\n", btn_id);
 }
