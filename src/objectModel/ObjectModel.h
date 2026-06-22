@@ -36,6 +36,8 @@ class ObjectModel {
             std::string::const_iterator &newEnd
         );
 
+        unsigned long getLastUpdate();
+
         std::vector<unsigned char>::iterator NVMLoad(std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator end);
         std::vector<unsigned char>::iterator NVMDump(std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator end);
         size_t getNVMSize();

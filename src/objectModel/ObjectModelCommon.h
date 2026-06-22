@@ -44,6 +44,7 @@ struct ObjectModelItem {
     bool saveToNVM = false;              // Will be saved and restored from NVM
     size_t NVMStringLen = 0;             // how many bytes to reserve in NVM (for strings only)
     bool secret = false;                 // if true, value will not be printed in debug output
+    unsigned long updated = 0;           // timestamp of last update
 
     ObjectModelItem() = default;
     ObjectModelItem(ObjectModelItemValue val) : 

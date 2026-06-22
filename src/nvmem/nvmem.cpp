@@ -128,6 +128,9 @@ void NVMem::load() {
 
     auto it = om.NVMLoad(memory.begin(), memory.end());
     Serial.printf("%d bytes loaded from EEPROM\n",std::distance(memory.begin(),it));
+
+    //update current lastUpdate to prevent self-triggered save
+    autosaveTs = om.getLastUpdate();
 }
 
 void NVMem::save() {
@@ -142,6 +145,24 @@ void NVMem::save() {
         Serial.printf("block %d of %d %s\n",
             block+1,blocksToSave,
             saved ? "saved" : "skipped"
-        );                
+        );
+    }
+}
+
+void NVMem::Spin(unsigned long ts)
+{
+    unsigned long lastUpdate = om.getLastUpdate();
+
+    if (lastUpdate != autosaveTs) {
+        autosaveTs = lastUpdate;
+        autosaveAwaitUpdate = true;
+    }
+
+    if (autosaveAwaitUpdate) {
+        if (ts - autosaveTs > 5000) {
+            Serial.println("saving to EEPROM");
+            save();
+            autosaveAwaitUpdate = false;
+        }
     }
 }

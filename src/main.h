@@ -81,8 +81,6 @@ auto pump1toff = std::make_shared<IntObjectModelIface>(&pump1,"delayToOff",0,100
 auto pump2toff = std::make_shared<IntObjectModelIface>(&pump2,"delayToOff",0,100);
 auto htrtoff = std::make_shared<IntObjectModelIface>(&htr,"delayToOff",0,100);
 
-void saveToEeprom();
-
 std::vector<MenuItem> m1Items{
     MenuItem{"P1 delay on", INT, pump1ton, "%d s"},
     MenuItem{"P1 delay off", INT, pump1toff, "%d s"},
@@ -110,7 +108,7 @@ std::vector<MenuItem> mainMenuItems{
     MenuItem{"Heater", LINK, &m3},
     MenuItem{"Back to main",BACK},
 };
-Menu mainMenu(ui,mainMenuItems, saveToEeprom);
+Menu mainMenu(ui,mainMenuItems);
 
 MainScreen mainScreen(ui,&mainMenu,omRoot);
 

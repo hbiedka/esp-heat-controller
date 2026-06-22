@@ -5,12 +5,6 @@
 
 DebugObjectModelWatcher debugWatcher;
 
-void saveToEeprom()
-{
-  eeprom.save();
-  Serial.println("Saving to eeprom");
-}
-
 void setup() {
 
   pinMode(PIN_LED_STATUS,OUTPUT);
@@ -45,6 +39,8 @@ void loop() {
   pump1.Spin(ts);
   pump2.Spin(ts);
   htr.Spin(ts);
+
+  eeprom.Spin(ts);
 
   wifi.Spin(ts);
   httpServer.Spin(ts);

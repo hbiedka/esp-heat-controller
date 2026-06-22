@@ -527,6 +527,9 @@ void ObjectModel::updateLocalProperty(const std::string &label, const ObjectMode
         //update value
         it->second.value = value;
 
+        //update timestamp
+        it->second.updated = millis();
+
         //look for watchers
         for (auto watcher : watchers) {
             if (watcher.property == it->first && watcher.functor) {
@@ -534,6 +537,29 @@ void ObjectModel::updateLocalProperty(const std::string &label, const ObjectMode
             }
         }
     }
+}
+
+unsigned long ObjectModel::getLastUpdate() {
+    unsigned long ts = 0;
+    unsigned long updated = 0;
+
+    ObjectModelItemMap &om = getObjectModel();
+    for (const auto& map_item : om) {
+        const auto& item = map_item.second;
+
+        if (std::holds_alternative<ObjectModel*>(item.value)) {
+            ObjectModel *linked_ob = std::get<ObjectModel*>(item.value);
+            if (linked_ob != nullptr) {
+                updated = linked_ob->getLastUpdate();
+            }
+        } else {
+            if (item.saveToNVM)
+                updated = item.updated;
+        }
+
+        if (updated > ts) ts = updated;
+    }
+    return ts;
 }
 
 ObjectModel& ObjectModel::operator[](const std::string &label) {

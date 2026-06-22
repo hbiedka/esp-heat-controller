@@ -16,6 +16,8 @@ class NVMem {
         ObjectModel &om;
 
         size_t numEeepromBlocks;
+        unsigned long autosaveTs = 0;
+        bool autosaveAwaitUpdate = false;
 
         bool loadBlock(size_t num);
         bool saveBlock(size_t num);
@@ -26,6 +28,8 @@ class NVMem {
         void slowInitAndLoad();
         void load();
         void save();
+
+        void Spin(unsigned long ts);
 };
 
 #endif // NVMEM_H
