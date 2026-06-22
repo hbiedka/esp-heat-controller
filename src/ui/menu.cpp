@@ -21,13 +21,6 @@ Menu::Menu(Ui &_ui, std::vector<MenuItem> _items):
 {
 }
 
-Menu::Menu(Ui &_ui, std::vector<MenuItem> _items, void (*_returnCallback)(void)) :
-    ui(_ui),
-    items(_items),
-    returnCallback(_returnCallback)
-{
-}
-
 //up/down buttons callbacks
 void Menu::buttonUp() {
     if (valueEdit) {
@@ -116,11 +109,6 @@ void Menu::buttonEnter() {
     } else if (item.type == BACK) {
         //set pointer at first position before exit
         pos = 0;
-
-        //call return caller if any:
-        if (returnCallback) {
-            returnCallback();
-        }
 
         //go to previous menu
         JumpBack();

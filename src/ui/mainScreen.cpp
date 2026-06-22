@@ -26,7 +26,7 @@ MainScreen::MainScreen(Ui &_ui, NavigativeScreen *_menu,ObjectModel &_om):
 
 void MainScreen::Show() {
     shown = true;
-    ui.takeoverButtons(this);    
+    ui.takeoverButtons(this);
     ui.loadTemplate(uiTemplate);
 
     ui.Clear();
