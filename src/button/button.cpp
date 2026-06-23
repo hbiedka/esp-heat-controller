@@ -67,25 +67,6 @@ void Button::Spin(unsigned long ts) {
 
 };
 
-//callback setters
-//if press/hold callbacks set, the unified callback is revoked
-//if unified callback set, both press/hold callbacks are revoked
-
-void Button::setPressCb(void (*cb)(uint8_t)) {
-    unified_cb = nullptr;
-    press_cb = cb;
-}
-
-void Button::setHoldCb(void (*cb)(uint8_t)) {
-    unified_cb = nullptr;
-    hold_cb = cb;
-}
-
-void Button::setCb(void (*cb)(uint8_t,bool)) {
-    press_cb = nullptr;
-    hold_cb = nullptr;
-    unified_cb = cb;
-}
 
 void Button::assignInteractiveObject(ButtonInteractive* obj) {
     interactiveObject = obj;

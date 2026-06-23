@@ -56,9 +56,6 @@ class Button {
         virtual bool GetState() = 0;
         virtual void Spin(unsigned long ts);
 
-        virtual void setPressCb(void (*cb)(uint8_t));
-        virtual void setHoldCb(void (*cb)(uint8_t));
-        virtual void setCb(void (*cb)(uint8_t,bool));
         virtual void assignInteractiveObject(ButtonInteractive* obj);
 };
 
