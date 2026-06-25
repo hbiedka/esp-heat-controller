@@ -1,6 +1,8 @@
 #include "heater.h"
 
-Heater::Heater(uint8_t _pin, bool *_input, std::string name) :
+Heater::Heater(uint8_t _pin, std::shared_ptr<Input> _input, std::string name) :
+    pin(_pin),
+    input(_input),
     delaySetterFunctor(*this)
 {
     pin = _pin;
@@ -21,9 +23,8 @@ Heater::Heater(uint8_t _pin, bool *_input, std::string name) :
 }
 
 void Heater::Spin(unsigned long ts) {
-    if (input == nullptr) return;
 
-    bool in = *input;
+    bool in = input->getState();
     int time_to_next_state_ms = 0;
     int time_to_next_state = 0;
 

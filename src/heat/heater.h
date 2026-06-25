@@ -2,7 +2,10 @@
 #define HEATER_H
 
 #include <Arduino.h>
-#include <objectModel/ObjectModel.h>
+#include <memory>
+
+#include "objectModel/ObjectModel.h"
+#include "input/input.h"
 
 enum HeaterState {
     OFF = 0,
@@ -38,7 +41,7 @@ class Heater : public ObjectModel {
         unsigned long state_ts = 0;
         unsigned long delay_to_on = 5;
         unsigned long delay_to_off = 5;
-        bool *input = nullptr;
+        std::shared_ptr<Input> input;
         bool last_input = false;
 
         void (*log_cb)(String) = nullptr;
@@ -47,8 +50,7 @@ class Heater : public ObjectModel {
     
         HeaterData h_data = {OFF,0};
 
-        Heater(uint8_t _pin, bool *input, std::string name);
-        void setInput(bool *_input) { input = _input; };
+        Heater(uint8_t _pin, std::shared_ptr<Input> _input, std::string name);
         void setLogCb(void (*cb)(String)) { log_cb = cb; };
         void Spin(unsigned long ts);
 
