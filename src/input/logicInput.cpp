@@ -1,8 +1,10 @@
 #include "logicInput.h"
 
-LogicInput::LogicInput(LogicInputOperation _op, const std::vector<Input*> _inputs):
+LogicInput::LogicInput(
+    LogicInputOperation _op,
+    const std::vector<std::shared_ptr<Input>> _inputs) :
     op(_op),
-    inputs(_inputs)
+    inputs(std::move(_inputs))
 {}
 
 void LogicInput::Spin(unsigned long ts)
@@ -13,7 +15,7 @@ void LogicInput::Spin(unsigned long ts)
     {
         case LogicInputOperation::OR:
             state = false;
-            for (auto* in : inputs) {
+            for (auto& in : inputs) {
                 state |= in->getState();
                 if (state) break;
             }
@@ -21,7 +23,7 @@ void LogicInput::Spin(unsigned long ts)
 
         case LogicInputOperation::AND:
             state = true;
-            for (auto* in : inputs) {
+            for (auto& in : inputs) {
                 state &= in->getState();
                 if (!state) break;
             }

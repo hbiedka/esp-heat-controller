@@ -3,6 +3,7 @@
 
 #include "input.h"
 #include <Arduino.h>
+#include <memory>
 
 enum class LogicInputOperation {
     NOP = 0,
@@ -13,9 +14,11 @@ enum class LogicInputOperation {
 class LogicInput : public Input {
     private:
         LogicInputOperation op;
-        const std::vector<Input*> inputs;
+        const std::vector<std::shared_ptr<Input>> inputs;
     public:
-        LogicInput(LogicInputOperation _op, const std::vector<Input*> _inputs);
+        LogicInput(
+            LogicInputOperation _op,
+            const std::vector<std::shared_ptr<Input>> _inputs);
 
         void Spin(unsigned long ts) override;
 };

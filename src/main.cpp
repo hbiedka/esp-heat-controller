@@ -32,9 +32,9 @@ void loop() {
   resistorLadder->Spin(ts);
   panel.Spin(ts);
 
-  in1.Spin(ts);
-  in2.Spin(ts);
-  combined.Spin(ts);
+  in1->Spin(ts);
+  in2->Spin(ts);
+  combined->Spin(ts);
 
   pump1.Spin(ts);
   pump2.Spin(ts);

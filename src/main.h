@@ -45,13 +45,14 @@ ButtonGroup panel({
 
 std::vector<uint8_t> outputs{PIN_PUMP1,PIN_PUMP2,PIN_HEATER};
 
-ExternalInput in1(PIN_IN1);
-ExternalInput in2(PIN_IN2);
-LogicInput combined(LogicInputOperation::OR,{&in1,&in2});
+auto in1 = std::make_shared<ExternalInput>(PIN_IN1);
+auto in2 = std::make_shared<ExternalInput>(PIN_IN2);
+auto combined = std::make_shared<LogicInput>(LogicInputOperation::OR,
+    std::vector<std::shared_ptr<Input>>{in1,in2});
 
-Heater pump1(PIN_PUMP1,in1.getStatePtr(),"Pump 1");
-Heater pump2(PIN_PUMP2,in2.getStatePtr(),"Pump 2");
-Heater htr(PIN_HEATER,combined.getStatePtr(),"Heater");
+Heater pump1(PIN_PUMP1,in1->getStatePtr(),"Pump 1");
+Heater pump2(PIN_PUMP2,in2->getStatePtr(),"Pump 2");
+Heater htr(PIN_HEATER,combined->getStatePtr(),"Heater");
 WifiEngine wifi;
 
 std::vector<ObjectModel*> pumps{{&pump1,&pump2}};
