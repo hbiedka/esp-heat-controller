@@ -1,22 +1,71 @@
 #include "io/pcf8574.h"
+#include <stdexcept>
 
 PCF8574::PCF8574(uint8_t _address, std::shared_ptr<Input> _intPin) :
     address(_address),
     intPin(_intPin),
-    inputs(8)
+    ios(8,std::make_shared<PCF8574Unused>())
+{}
+
+std::shared_ptr<PCF8574Button>
+PCF8574::RegisterButton(size_t ioNum, uint8_t buttonId)
 {
+    if (ioNum >= ios.size())
+        throw std::out_of_range("RegisterButton: index must be from 0 to 7");
+
+    auto btn = std::make_shared<PCF8574Button>(buttonId);
+    ios[ioNum] = btn;
+    return btn;
 }
 
-void PCF8574::updateInputs(uint8_t data)
+std::shared_ptr<PCF8574Input>
+PCF8574::RegisterInput(size_t ioNum)
+{
+    if (ioNum >= ios.size())
+        throw std::out_of_range("RegisterButton: index must be from 0 to 7");
+
+    auto in = std::make_shared<PCF8574Input>();
+    ios[ioNum] = in;
+    return in;
+}
+
+void PCF8574::UpdateInputs(uint8_t data)
 {
     for (size_t i = 0; i<8; i++) {
-        inputs[i].state = data & 1;
+        auto& io = ios[i];
+        bool st = !(data & 1);
+        if (std::holds_alternative<std::shared_ptr<PCF8574Input>>(io)) {
+            std::get<std::shared_ptr<PCF8574Input>>(io)->SetState(st);
+        } else if (std::holds_alternative<std::shared_ptr<PCF8574Button>>(io)) {
+            std::get<std::shared_ptr<PCF8574Button>>(io)->SetState(st);
+        }
         data >>= 1;
+    }
+}
+
+void PCF8574::ShowIO()
+{
+    for (size_t i = 0; i< 8; i++) {
+        auto& io = ios[i];
+        if (std::holds_alternative<std::shared_ptr<PCF8574Input>>(io)) {
+            Serial.printf("index %d holds in\n",i);
+        } else if (std::holds_alternative<std::shared_ptr<PCF8574Button>>(io)) {
+            Serial.printf("index %d holds btn id\n",i);
+        } else if (std::holds_alternative<std::shared_ptr<PCF8574Unused>>(io)) {
+            Serial.printf("index %d is unused\n",i);
+        }
     }
 }
 
 void PCF8574::Spin(unsigned long ts)
 {
+    //spin children
+    for (auto& io : ios) {
+        if (std::holds_alternative<std::shared_ptr<PCF8574Input>>(io)) {
+            std::get<std::shared_ptr<PCF8574Input>>(io)->Spin(ts);
+        }
+    }
+
     if (state == PCF8574State::INIT) {
         Wire.setClock(100'000);
         Wire.beginTransmission(address);
@@ -26,7 +75,6 @@ void PCF8574::Spin(unsigned long ts)
     } else if (state == PCF8574State::WAIT_INT_DOWN) {
         if (intPin->getState()) {
             //interrupt
-            Serial.println("int from pcf");
             state = PCF8574State::SEND_RQ;
         }
     } else if (state == PCF8574State::SEND_RQ) {
@@ -34,17 +82,27 @@ void PCF8574::Spin(unsigned long ts)
         int bytesRecvd = Wire.requestFrom(address,(uint8_t)1);
         if (bytesRecvd > 0) {
             uint8_t data = Wire.read();
-            Serial.printf("got data 0x%02x\n",data);
+            UpdateInputs(data);
         } else {
             Serial.println("Error, no data received");
         }
 
         state = PCF8574State::WAIT_INT_UP;
+        lastTs = ts;    //to trigger timeout
 
     } else if (state == PCF8574State::WAIT_INT_UP) {
+        
+
         if (!intPin->getState()) {
-            Serial.println("end int from pcf");
             state = PCF8574State::WAIT_INT_DOWN;
+        } else {
+            // sometimes int pin does not go back to high state,
+            // so the best is to repeat read after some time
+            if (lastTs - ts > 100) {
+                Serial.println("PCF: Timeout waiting for int pin up, updating");
+                state = PCF8574State::SEND_RQ;
+            }
+
         }
     }
 }
