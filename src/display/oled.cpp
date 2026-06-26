@@ -10,7 +10,7 @@ void Oled::cmd(uint8_t c) {
 void Oled::Init() {
     // init display
   Wire.begin();
-  Wire.setClock(400'000);
+  Wire.setClock(400'000);   // enable high-speed mode
 
   Wire.beginTransmission(address);
   cmd(0xAE);      //AE Display off (11)
@@ -39,6 +39,7 @@ void Oled::Init() {
 }
 
 void Oled::Clear() {
+    Wire.setClock(400'000);
     for (uint8_t i = 0; i < 0xF ;i++) {
         Wire.beginTransmission(address);
         cmd(0xB0 | i);  //page i
@@ -75,6 +76,7 @@ int8_t Oled::PrintChar(char c, size_t font_id, uint8_t col, uint8_t page,uint8_t
 
     uint16_t data;
 
+    Wire.setClock(400'000);
     for (uint8_t i = 0; i < 2; i++) {
         Wire.beginTransmission(address);
 
@@ -108,6 +110,7 @@ void Oled::PrintStr(const std::string &s, size_t font_id, uint8_t col, uint8_t p
 }
 
 void Oled::ClearStr(uint8_t col,uint8_t page, uint8_t wid) {
+    Wire.setClock(400'000);
     for (uint8_t i = 0; i < 2; i++) {
         Wire.beginTransmission(address);
 
