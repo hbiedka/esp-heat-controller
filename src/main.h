@@ -8,6 +8,7 @@
 #include "input/externalInput.h"
 #include "input/analogExternalInput.h"
 #include "input/logicInput.h"
+#include "io/pcf8574.h"
 #include "heat/heater.h"
 #include "display/oled.h"
 #include "display/oledUi.h"
@@ -24,29 +25,35 @@
 
 
 #define OLED_ADDR 0x3c
+#define PCF_ADDR 0x3f
 
 #define PIN_LED_STATUS 2 //built-in led
 
-#define PIN_PUMP1 15
-#define PIN_PUMP2 13
+#define PIN_PUMP1 13
+#define PIN_PUMP2 15
 #define PIN_HEATER 16
 
-#define PIN_IN1 12
-#define PIN_IN2 14
+#define PIN_PCF_INT 12
 
-#define PIN_ADC_RESISTOR_LADDER 0
+#define PCF_PIN_IN1 7
+#define PCF_PIN_IN2 6
+#define PCF_PIN_BTN1 1
+#define PCF_PIN_BTN2 0
+#define PCF_PIN_BTN3 4
 
-auto resistorLadder = std::make_shared<AnalogExternalInput>(PIN_ADC_RESISTOR_LADDER);
+auto pcf_int = std::make_shared<ExternalInput>(PIN_PCF_INT);
+PCF8574 pcf(PCF_ADDR,pcf_int);
+
 ButtonGroup panel({
-    std::make_shared<RLadderButton>(1,resistorLadder,100,150),
-    std::make_shared<RLadderButton>(2,resistorLadder,350,400),
-    std::make_shared<RLadderButton>(3,resistorLadder,550,600)
+    pcf.RegisterButton(PCF_PIN_BTN1,1),
+    pcf.RegisterButton(PCF_PIN_BTN2,2),
+    pcf.RegisterButton(PCF_PIN_BTN3,3),
 });
 
 std::vector<uint8_t> outputs{PIN_PUMP1,PIN_PUMP2,PIN_HEATER};
 
-auto in1 = std::make_shared<ExternalInput>(PIN_IN1);
-auto in2 = std::make_shared<ExternalInput>(PIN_IN2);
+auto in1 = pcf.RegisterInput(PCF_PIN_IN1);
+auto in2 = pcf.RegisterInput(PCF_PIN_IN2);
 auto combined = std::make_shared<LogicInput>(LogicInputOperation::OR,
     std::vector<std::shared_ptr<Input>>{in1,in2});
 

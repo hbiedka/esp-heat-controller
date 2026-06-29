@@ -29,11 +29,10 @@ void setup() {
 void loop() {
   unsigned long ts = millis();
 
-  resistorLadder->Spin(ts);
+  pcf_int->Spin(ts);
+  pcf.Spin(ts);
   panel.Spin(ts);
 
-  in1->Spin(ts);
-  in2->Spin(ts);
   combined->Spin(ts);
 
   pump1.Spin(ts);
