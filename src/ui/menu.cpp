@@ -121,6 +121,10 @@ void Menu::buttonEnter() {
 void Menu::ButtonCallback(uint8_t id, bool hold) {
 
     Serial.printf("buttonCallback id %u\n",id);
+
+    //wake up display first
+    if (ui.OledWakeUpPulse()) return;
+
     switch(id) {
         case 1: buttonUp(); break;
         case 3: buttonDown(); break;

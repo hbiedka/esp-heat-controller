@@ -21,6 +21,7 @@ void setup() {
   wifi.AddWatcher("state","wifi/state",&debugWatcher);
 
   oled.Init();
+  oled.SetWakeUpMode(OledWakeUpMode::MANUAL);
   mainScreen.Show();
 
   eeprom.slowInitAndLoad();
@@ -29,6 +30,7 @@ void setup() {
 void loop() {
   unsigned long ts = millis();
 
+  oled.Spin(ts);
   pcf_int->Spin(ts);
   pcf.Spin(ts);
   panel.Spin(ts);

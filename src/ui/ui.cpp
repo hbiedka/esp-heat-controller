@@ -32,3 +32,8 @@ void Ui::takeoverButtons(ButtonInteractive* obj)
     if (!bg) return;    //TODO throw exception
     bg->assignInteractiveObject(obj);
 }
+
+bool Ui::OledWakeUpPulse() {
+    if (!oled) return false;  //TODO throw exception
+    return oled->WakeUpPulse();
+}

@@ -52,6 +52,9 @@ void MainScreen::buttonEnter() {
 }
 
 void MainScreen::ButtonCallback(uint8_t id, bool hold) {
+    //wake up display first
+    if (ui.OledWakeUpPulse()) return;
+
     if (id == 2 && !hold) buttonEnter();
 }
 

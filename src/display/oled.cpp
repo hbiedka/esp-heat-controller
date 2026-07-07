@@ -36,6 +36,8 @@ void Oled::Init() {
 
   cmd(0xB0);  //page 0
   Wire.endTransmission();
+
+  isAwake = true;
 }
 
 void Oled::Clear() {
@@ -60,6 +62,9 @@ void Oled::Clear() {
 }
 
 int8_t Oled::PrintChar(char c, size_t font_id, uint8_t col, uint8_t page,uint8_t offset) {
+    if (wakeUpMode == OledWakeUpMode::AUTO)
+        WakeUp();
+
     // TODO limit font_id
 
     Font *F = fonts[font_id];
@@ -97,7 +102,6 @@ int8_t Oled::PrintChar(char c, size_t font_id, uint8_t col, uint8_t page,uint8_t
 }
 
 void Oled::PrintStr(const std::string &s, size_t font_id, uint8_t col, uint8_t page,uint8_t offset) {
-    
     uint8_t c = col;
     int8_t newc;
     for(unsigned int i = 0; i < s.length(); i++) {
@@ -110,6 +114,9 @@ void Oled::PrintStr(const std::string &s, size_t font_id, uint8_t col, uint8_t p
 }
 
 void Oled::ClearStr(uint8_t col,uint8_t page, uint8_t wid) {
+    if (wakeUpMode == OledWakeUpMode::AUTO)
+        WakeUp();
+
     Wire.setClock(400'000);
     for (uint8_t i = 0; i < 2; i++) {
         Wire.beginTransmission(address);
@@ -124,4 +131,45 @@ void Oled::ClearStr(uint8_t col,uint8_t page, uint8_t wid) {
         }
         Wire.endTransmission();
     }
+}
+
+void Oled::Spin(unsigned long ts) {
+    if (wakeUpMode != OledWakeUpMode::OFF && ts - lastWakeUpTs > 30000) {
+        // sleep display until next wakeup
+        Wire.setClock(400'000);   // enable high-speed mode
+        Wire.beginTransmission(address);
+        cmd(0xAE);      //AE Display off (11)
+        Wire.endTransmission();
+        isAwake = false;
+    }
+}
+
+/* Wake up trigger - updates the timer, wakes up if not awake */
+void Oled::WakeUp() {
+    lastWakeUpTs = millis();
+    if (!isAwake) {
+        Wire.setClock(400'000);   // enable high-speed mode
+        Wire.beginTransmission(address);
+        cmd(0xAF);   //AF Display on
+        Wire.endTransmission();
+
+        isAwake = true;
+    }
+}
+
+/* Wake-up mode setter */
+void Oled::SetWakeUpMode(OledWakeUpMode mode)
+{
+    wakeUpMode = mode;
+}
+
+/*
+    Wake up only if not awake,
+    Returns true if just woken up, false if woken up yet
+*/
+bool Oled::WakeUpPulse()
+{
+    if (isAwake) return false;
+    WakeUp();
+    return true;
 }

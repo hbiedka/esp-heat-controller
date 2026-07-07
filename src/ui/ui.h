@@ -18,6 +18,7 @@ class Ui {
         void loadTemplate(const std::vector<UiTemplateEntry> &entries);
         void takeoverButtons(ButtonInteractive* obj);
         void Clear();
+        bool OledWakeUpPulse();
         UiBlock &operator[](size_t i) { return blocks[i]; };
         unsigned int getBlocksNum() { return blocks.size(); };
 };
