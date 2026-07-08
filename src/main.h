@@ -80,7 +80,7 @@ HttpServer httpServer(omRoot);
 Selftest selftest(outputs,&panel);
 
 Oled oled(OLED_ADDR);
-Ui ui(&oled,&panel);
+Ui ui(oled,panel);
 
 auto pump1ton = std::make_shared<IntObjectModelIface>(&pump1,"delayToOn",0,100);
 auto pump2ton = std::make_shared<IntObjectModelIface>(&pump2,"delayToOn",0,100);

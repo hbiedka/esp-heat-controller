@@ -9,12 +9,12 @@
 class Ui {
     private:
         std::vector<UiBlock> blocks;
-        Oled *oled = nullptr;
-        ButtonGroup *bg = nullptr;
+        Oled &oled;
+        ButtonGroup &bg;
 
     public:
-        Ui(Oled *_oled, ButtonGroup *_bg, const std::vector<UiTemplateEntry> &entries);
-        Ui(Oled *_oled, ButtonGroup *_bg);
+        Ui(Oled &_oled, ButtonGroup &_bg, const std::vector<UiTemplateEntry> &entries);
+        Ui(Oled &_oled, ButtonGroup &_bg);
         void loadTemplate(const std::vector<UiTemplateEntry> &entries);
         void takeoverButtons(ButtonInteractive* obj);
         void Clear();
