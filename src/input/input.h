@@ -12,10 +12,6 @@ class Input
         virtual bool getState() {
             return state;
         }
-        virtual bool* getStatePtr()
-        {
-            return &state;
-        }
 };
 
 class AnalogInput
@@ -28,10 +24,6 @@ class AnalogInput
         virtual void Spin(unsigned long ts) = 0;
         virtual unsigned int getState() {
             return state;
-        }
-        virtual unsigned int* getStatePtr()
-        {
-            return &state;
         }
 };
 #endif
