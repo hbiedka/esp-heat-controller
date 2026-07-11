@@ -2,11 +2,11 @@
 
 std::vector<std::string> defaultBoolLabels{"Y","N"};
 
-UiBlock menuItem{{
+std::vector<TextField> menuItem{
     TextField(12,0,60,0,0),     //label
     TextField(80,0,40,0,4),     //value
     TextField(2,0,10,1,0),      //pointer
-}};
+};
 
 static const std::vector<UiTemplateEntry> uiTemplate{
     {menuItem,0,0},

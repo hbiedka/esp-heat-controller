@@ -39,25 +39,8 @@ class TextField {
 
 };
 
-
-class UiBlock {
-    private:
-        uint8_t x = 0;
-        uint8_t y = 0;
-    public:
-        std::vector<TextField> tfList;
-        UiBlock(std::vector<TextField> tfList)
-            : tfList(tfList)
-        {}
-
-        UiBlock(const UiBlock &block, uint8_t x, uint8_t y);
-        void SetOled(Oled *oled);
-        TextField &operator[](size_t i) { return tfList[i]; }
-
-};
-
 struct UiTemplateEntry {
-    const UiBlock &block;
+    const std::vector<TextField> &block;
     uint8_t x;
     uint8_t y;
 };

@@ -6,13 +6,13 @@
 #include "../objectModel/ObjectModelWatcher.h"
 #include "../objectModel/ObjectModel.h"
 
-static UiBlock htrStatus{{
+static std::vector<TextField> htrStatus{{
     TextField(2,0,70,0,0),
     TextField(72,0,20,0,0),
     TextField(92,0,10,0,0),
     TextField(102,0,20,0,0),
 }};
-static UiBlock label{{
+static std::vector<TextField> label{{
     TextField(2,0,120,0,0),
 }};
 

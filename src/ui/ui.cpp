@@ -15,8 +15,11 @@ void Ui::loadTemplate(const std::vector<UiTemplateEntry> &entries)
 {
     blocks.clear();
     for (size_t i = 0; i < entries.size(); i++) {
-        blocks.push_back(UiBlock(entries[i].block,entries[i].x,entries[i].y));
-        blocks.back().SetOled(&oled);
+        blocks.push_back({});
+        for (auto& tf : entries[i].block) {
+            blocks.back().push_back(TextField(tf,entries[i].x,entries[i].y));
+            blocks.back().back().SetOled(&oled);
+        }
     }
 }
 
