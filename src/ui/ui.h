@@ -8,7 +8,7 @@
 
 class Ui {
     private:
-        std::vector<std::vector<TextField>> blocks;
+        std::vector<std::vector<ActiveTextField>> blocks;
         Oled &oled;
         ButtonGroup &bg;
 
@@ -19,7 +19,7 @@ class Ui {
         void takeoverButtons(ButtonInteractive* obj);
         void Clear();
         bool OledWakeUpPulse();
-        std::vector<TextField> &operator[](size_t i) { return blocks[i]; };
+        std::vector<ActiveTextField> &operator[](size_t i) { return blocks[i]; };
         unsigned int getBlocksNum() { return blocks.size(); };
 };
 
