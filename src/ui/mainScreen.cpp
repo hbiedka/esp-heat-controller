@@ -13,15 +13,27 @@ void MainScreenWatcher::operator()(
 MainScreen::MainScreen(Ui &_ui, NavigativeScreen *_menu,ObjectModel &_om):
     ui(_ui),
     menu(_menu),
-    om(_om)
+    om(_om),
+    watcher(this)
 {
-    om["pumps"]["0"].AddWatcher("state","pumps/0/state",new MainScreenWatcher(this));
-    om["pumps"]["1"].AddWatcher("state","pumps/1/state",new MainScreenWatcher(this));
-    om["heater"].AddWatcher("state","heater/state",new MainScreenWatcher(this));
-    om["pumps"]["0"].AddWatcher("timeToNextState","pumps/0/timeToNextState",new MainScreenWatcher(this));
-    om["pumps"]["1"].AddWatcher("timeToNextState","pumps/1/timeToNextState",new MainScreenWatcher(this));
-    om["heater"].AddWatcher("timeToNextState","heater/timeToNextState",new MainScreenWatcher(this));
-    om["wifi"].AddWatcher("state","wifi/state",new MainScreenWatcher(this));
+    om["pumps"]["0"].AddWatcher("state","pumps/0/state",&watcher);
+    om["pumps"]["1"].AddWatcher("state","pumps/1/state",&watcher);
+    om["heater"].AddWatcher("state","heater/state",&watcher);
+    om["pumps"]["0"].AddWatcher("timeToNextState","pumps/0/timeToNextState",&watcher);
+    om["pumps"]["1"].AddWatcher("timeToNextState","pumps/1/timeToNextState",&watcher);
+    om["heater"].AddWatcher("timeToNextState","heater/timeToNextState",&watcher);
+    om["wifi"].AddWatcher("state","wifi/state",&watcher);
+}
+
+MainScreen::~MainScreen()
+{
+    om["pumps"]["0"].RemoveWatcher("state",watcher);
+    om["pumps"]["1"].RemoveWatcher("state",watcher);
+    om["heater"].RemoveWatcher("state",watcher);
+    om["pumps"]["0"].RemoveWatcher("timeToNextState",watcher);
+    om["pumps"]["1"].RemoveWatcher("timeToNextState",watcher);
+    om["heater"].RemoveWatcher("timeToNextState",watcher);
+    om["wifi"].RemoveWatcher("state",watcher);
 }
 
 void MainScreen::Show() {

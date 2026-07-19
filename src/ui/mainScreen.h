@@ -26,30 +26,7 @@ static const std::vector<UiTemplateEntry> uiTemplate{
 class HeaterStateWatcher;
 class HeaterTimeToNextStateWatcher;
 
-class MainScreen : 
-    public ButtonInteractive, 
-    public NavigativeScreen
-{
-    private:
-        Ui &ui;
-        NavigativeScreen *menu;
-        bool shown = false;
-
-        ObjectModel &om;
-
-        void handleObjectModelChange(const std::string &property, const std::string &context, const ObjectModelItem &item);
-        void ShowTimeToNextState(unsigned int index, int val);
-        void ShowState(unsigned int index, int val);
-
-    public:
-        friend class MainScreenWatcher;
-
-        MainScreen(Ui &_ui, NavigativeScreen *_menu, ObjectModel &_om);
-
-        void Show();
-        void buttonEnter();
-        void ButtonCallback(uint8_t id, bool hold) override;
-};
+class MainScreen;
 
 class MainScreenWatcher : public ObjectModelWatcher
 {
@@ -63,6 +40,33 @@ class MainScreenWatcher : public ObjectModelWatcher
             const std::string &property,
             const std::string &context,
             const ObjectModelItem &item) override;
+};
+
+class MainScreen :
+    public ButtonInteractive,
+    public NavigativeScreen
+{
+    private:
+        Ui &ui;
+        NavigativeScreen *menu;
+        bool shown = false;
+
+        ObjectModel &om;
+        MainScreenWatcher watcher;
+
+        void handleObjectModelChange(const std::string &property, const std::string &context, const ObjectModelItem &item);
+        void ShowTimeToNextState(unsigned int index, int val);
+        void ShowState(unsigned int index, int val);
+
+    public:
+        friend class MainScreenWatcher;
+
+        MainScreen(Ui &_ui, NavigativeScreen *_menu, ObjectModel &_om);
+        ~MainScreen();
+
+        void Show();
+        void buttonEnter();
+        void ButtonCallback(uint8_t id, bool hold) override;
 };
 
 #endif

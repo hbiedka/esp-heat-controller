@@ -1,6 +1,8 @@
 #ifndef OBJECT_MODEL_H
 #define OBJECT_MODEL_H
 
+#include <algorithm>
+
 #include "ObjectModelCommon.h"
 #include "ObjectModelWatcher.h"
 
@@ -55,8 +57,14 @@ class ObjectModel {
         void AddWatcher(const std::string &property, const std::string &context, ObjectModelWatcher *watcher) {
             watchers.push_back({property,context,watcher});
         };
-        void RemoveWatcher(std::string &property, ObjectModelWatcher &watcher) {
-            //TODO
+        void RemoveWatcher(const std::string &property, ObjectModelWatcher &watcher) {
+            watchers.erase(
+                std::remove_if(watchers.begin(), watchers.end(),
+                    [&](const ObjectModelWatcherItem &item) {
+                        return item.property == property && item.functor == &watcher;
+                    }),
+                watchers.end()
+            );
         };
 
         ObjectModel& operator[](const std::string &label);
