@@ -1,6 +1,8 @@
 #ifndef MENU_VALUE_IFACE_H
 #define MENU_VALUE_IFACE_H
 
+#include <string>
+
 enum class MenuGetterReturn {
     OK = 0,
     GETTER_UNDEF,
@@ -24,14 +26,20 @@ class MenuValueIface {
         virtual MenuGetterReturn get(bool &ref) const { 
             return MenuGetterReturn::GETTER_UNDEF;
         }
-        virtual MenuGetterReturn get(int &ref) const { 
+        virtual MenuGetterReturn get(int &ref) const {
+            return MenuGetterReturn::GETTER_UNDEF;
+        }
+        virtual MenuGetterReturn get(std::string &ref) const {
             return MenuGetterReturn::GETTER_UNDEF;
         }
 
-        virtual MenuSetterReturn set(bool &ref) const { 
+        virtual MenuSetterReturn set(bool &ref) const {
             return MenuSetterReturn::SETTER_UNDEF;
         }
-        virtual MenuSetterReturn set(int &ref) const { 
+        virtual MenuSetterReturn set(int &ref) const {
+            return MenuSetterReturn::SETTER_UNDEF;
+        }
+        virtual MenuSetterReturn set(std::string &ref) const {
             return MenuSetterReturn::SETTER_UNDEF;
         }
         virtual ~MenuValueIface() = default;

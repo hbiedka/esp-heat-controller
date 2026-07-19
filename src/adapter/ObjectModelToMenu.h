@@ -41,4 +41,27 @@ class IntObjectModelIface : public MenuValueIface {
         MenuSetterReturn set(int &ref) const override;
 };
 
+class StringObjectModelIface : public MenuValueIface {
+    private:
+        ObjectModel *objectModel;
+        std::string label;
+        size_t minLen = 0;
+        size_t maxLen = 0;
+
+    public:
+        StringObjectModelIface(ObjectModel *om, const std::string &lbl, size_t limit) :
+            objectModel(om),
+            label(lbl),
+            minLen(0),
+            maxLen(limit) {}
+        StringObjectModelIface(ObjectModel *om, const std::string &lbl, size_t bottom_limit, size_t top_limit) :
+            objectModel(om),
+            label(lbl),
+            minLen(bottom_limit),
+            maxLen(top_limit) {}
+
+        MenuGetterReturn get(std::string &ref) const override;
+        MenuSetterReturn set(std::string &ref) const override;
+};
+
 #endif
