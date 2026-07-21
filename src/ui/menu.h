@@ -28,7 +28,7 @@ struct MenuItem {
                                             // ignored for any other type
 
     std::shared_ptr<const MenuValueIface> iface;    // interface with get/set methods for int and bool
-    Menu *link = nullptr;                           // Link to menu item
+    NavigativeScreen *link = nullptr;               // Link to screen item
 
     std::string format = "%d";            // format string for int
                                     // ignored for any other type
@@ -54,7 +54,7 @@ struct MenuItem {
         : label(label), type(type), enumLabels(std::vector<std::string>()), iface(std::move(iface)) {}
 
     MenuItem(const std::string &label, MenuItemType type,
-            Menu *_link
+            NavigativeScreen *_link
         )
         : label(label), type(type), enumLabels(std::vector<std::string>())
         {
