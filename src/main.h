@@ -22,6 +22,7 @@
 #include "ui/ui.h"
 #include "ui/mainScreen.h"
 #include "ui/menu.h"
+#include "ui/stringEditor.h"
 
 
 #define OLED_ADDR 0x3c
@@ -89,6 +90,9 @@ auto pump1toff = std::make_shared<IntObjectModelIface>(&pump1,"delayToOff",0,100
 auto pump2toff = std::make_shared<IntObjectModelIface>(&pump2,"delayToOff",0,100);
 auto htrtoff = std::make_shared<IntObjectModelIface>(&htr,"delayToOff",0,100);
 
+auto wifiSsid = std::make_shared<StringObjectModelIface>(&wifi,"ssid",8,32);
+auto wifiPasswd = std::make_shared<StringObjectModelIface>(&wifi,"passwd",8,64);
+
 std::vector<MenuItem> m1Items{
     MenuItem{"P1 delay on", INT, pump1ton, "%d s"},
     MenuItem{"P1 delay off", INT, pump1toff, "%d s"},
@@ -110,10 +114,21 @@ std::vector<MenuItem> m3Items{
 };
 Menu m3(ui, m3Items);
 
+StringEditor ssidEditor(ui,wifiSsid,"SSID");
+StringEditor passwdEditor(ui,wifiPasswd,"Password");
+
+std::vector<MenuItem> m4Items{
+    MenuItem{"SSID", LINK, &ssidEditor},
+    MenuItem{"Password", LINK, &passwdEditor},
+    MenuItem{"Back",BACK},
+};
+Menu m4(ui, m4Items);
+
 std::vector<MenuItem> mainMenuItems{
     MenuItem{"Pump 1", LINK, &m1},
     MenuItem{"Pump 2", LINK, &m2},
     MenuItem{"Heater", LINK, &m3},
+    MenuItem{"WiFi", LINK, &m4},
     MenuItem{"Back to main",BACK},
 };
 Menu mainMenu(ui,mainMenuItems);
