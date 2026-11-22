@@ -20,12 +20,21 @@ class StringEditor
         std::string label;
         std::string value;
 
+        std::vector<TextField> keyboardPtrTemplate{};
         std::vector<TextField> keyboardTemplate{};
         std::vector<UiTemplateEntry> editorTemplate{};
-        const size_t kbdNumFields = 11;
-        const size_t kbdNumMidpoint = 5;
+        const size_t kbdNumFields = 9;
+        const size_t kbdNumMidpoint = 4;
         size_t charPos = 0;
 
+        enum {
+            BACKSPACE,
+            CHAR,
+            OK
+        } cursorPos = BACKSPACE;
+
+        void Redraw();
+        void RedrawKeyboard();
     public:
         StringEditor(Ui &_ui,
                 std::shared_ptr<const MenuValueIface> _iface,
@@ -33,7 +42,6 @@ class StringEditor
         );
 
         void Show() override;
-        void Redraw();
         void ButtonCallback(uint8_t id, bool hold) override;
 };
 
