@@ -164,12 +164,11 @@ void Oled::SetWakeUpMode(OledWakeUpMode mode)
 }
 
 /*
-    Wake up only if not awake,
-    Returns true if just woken up, false if woken up yet
+    Wake up pulse - triggers a wakeup and returns if it was already awake or not
 */
 bool Oled::WakeUpPulse()
 {
-    if (isAwake) return false;
+    bool wasAwake = isAwake;
     WakeUp();
-    return true;
+    return !wasAwake;
 }
