@@ -13,11 +13,6 @@ struct Font {
     const uint16_t *offsets;
 };
 
-
-
-const uint8_t F1_first_ch = 32;
-const uint8_t F1_last_ch = 126;
-
 const uint16_t F1_chardata[] PROGMEM = {
     0x0,0x0,0x0,    //32
     0x0,0xbe,0x0,   //33 !
@@ -128,10 +123,6 @@ const uint16_t F1_charoffsets[] PROGMEM = {
     0x1bc, 0x1c2, 0x1c8, 0x1cb, 0x1d0, 0x1d3, 0x1d9, 0x1de, 0x1e5, 0x1ea, 0x1ef, 0x1f4, 0x1f7, 0x1fa, 0x1fd, 
     0x203, 0x208,0x20d, 0x213   //end of table
 };
-
-const uint8_t F2_first_ch = 32;
-const uint8_t F2_last_ch = 126;
-
 
 const uint16_t F2_chardata[] PROGMEM = {
     0x0,0x0,0x0,0x0,        //32
