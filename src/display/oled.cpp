@@ -61,16 +61,11 @@ void Oled::Clear() {
     }
 }
 
-int8_t Oled::PrintChar(char c, size_t font_id, uint8_t col, uint8_t page,uint8_t offset) {
-    if (wakeUpMode == OledWakeUpMode::AUTO)
-        WakeUp();
-
-    // TODO limit font_id
-
+static int8_t GetCharWidth(char c, size_t font_id) {
+    
     Font *F = fonts[font_id];
 
     if (c < F->first_ch || c > F->last_ch) return -1;
-    if (page > 0x0F) return -1;
 
     uint8_t pos = c-F->first_ch;
 
@@ -79,7 +74,35 @@ int8_t Oled::PrintChar(char c, size_t font_id, uint8_t col, uint8_t page,uint8_t
     uint16_t next_reg = pgm_read_word(F->offsets+pos+1);
     uint8_t wid = next_reg-reg; //TODO casting
 
+    return wid;
+}
+
+int8_t Oled::PrintChar(char c,
+        size_t font_id, uint8_t col, uint8_t page,
+        uint8_t offset,bool border
+    ) {
+    if (wakeUpMode == OledWakeUpMode::AUTO)
+        WakeUp();
+
+    // TODO limit font_id
+    Font *F = fonts[font_id];
+
+    int8_t wid = GetCharWidth(c,font_id);
+    if (wid < 0) return -1;
+    uint8_t pos = c-F->first_ch;
+
+    //read first address of char data
+    uint16_t reg = pgm_read_word(F->offsets+pos);
+
     uint16_t data;
+
+    //borders
+    uint16_t borderBitmap = 0;
+    uint8_t textOffset = offset;
+    if (border) {
+        textOffset += F->borderPadding;
+        borderBitmap = (1 | 1<<(F->height))<< offset;
+    }
 
     Wire.setClock(400'000);
     for (uint8_t i = 0; i < 2; i++) {
@@ -91,8 +114,8 @@ int8_t Oled::PrintChar(char c, size_t font_id, uint8_t col, uint8_t page,uint8_t
         Wire.write(0x40);
 
         for (uint8_t j = 0; j < wid; j++) {
-            data = pgm_read_word(F->data+reg+j);
-            Wire.write(((data << offset) >> (8*i)) & 0xFF );
+            data = (pgm_read_word(F->data+reg+j)<<textOffset) | borderBitmap;
+            Wire.write((data >> (8*i)) & 0xFF );
         }
         Wire.endTransmission();
     }
@@ -101,21 +124,53 @@ int8_t Oled::PrintChar(char c, size_t font_id, uint8_t col, uint8_t page,uint8_t
 
 }
 
-void Oled::PrintStr(const std::string &s, size_t font_id, uint8_t col, uint8_t page,uint8_t offset) {
+void Oled::PrintStr(const std::string &s,
+        size_t font_id, uint8_t col, uint8_t page, uint8_t wid,
+        uint8_t offset, bool border
+    ) {
     uint8_t c = col;
     int8_t newc;
+    uint8_t limit = col+wid;
+
+    // add left/right padding if border
+    if (border) {
+        c = col+2;
+        limit = col+wid-2;
+    }
+
+
     for(unsigned int i = 0; i < s.length(); i++) {
         if (c > 128) break;
+        newc = c + GetCharWidth(s[i],font_id);
+        if (newc < 0) return;
 
-        newc = PrintChar(s[i],font_id,c,page,offset);
+        //detect if the next char would exceed the width limit
+        if (newc > limit) break;
+
+        newc = PrintChar(s[i],font_id,c,page,offset,border);
         if (newc < 0) return;
         c = newc;
     }
 }
 
-void Oled::ClearStr(uint8_t col,uint8_t page, uint8_t wid) {
+void Oled::ClearStr(size_t font_id, uint8_t col, uint8_t page,
+        uint8_t wid, uint8_t offset, bool border
+    ) {
     if (wakeUpMode == OledWakeUpMode::AUTO)
         WakeUp();
+
+    uint16_t edgesBitmap = 0;
+    uint16_t midBitmap = 0;
+
+    if (border) {
+        // TODO limit font_id
+        Font *F = fonts[font_id];
+        
+        //draw border
+        edgesBitmap = 0xFFFF >> (15-F->height);
+        edgesBitmap <<= offset;
+        midBitmap = (1 | 1<<(F->height))<< offset;
+    }
 
     Wire.setClock(400'000);
     for (uint8_t i = 0; i < 2; i++) {
@@ -127,7 +182,10 @@ void Oled::ClearStr(uint8_t col,uint8_t page, uint8_t wid) {
         Wire.write(0x40);
 
         for (uint8_t j = 0; j < wid; j++) {
-            Wire.write(0x00);
+            uint16_t data = (j==0 || j==wid-1)
+                ? edgesBitmap
+                : midBitmap;
+            Wire.write((data >> (8*i)) & 0xFF);
         }
         Wire.endTransmission();
     }

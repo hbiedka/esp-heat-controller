@@ -2,7 +2,7 @@
 
 std::vector<TextField> editorItem{
     TextField(2,0,60,0,0),     //label
-    TextField(2,2,120,0,0),     //value
+    TextField(2,2,120,0,2,true),     //value
     TextField(2,4,8,0,5),  //backspace pointer
     TextField(2,6,8,0,0),  //backspace
     TextField(110,4,18,0,5),  //ok pointer

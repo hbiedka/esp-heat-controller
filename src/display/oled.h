@@ -35,9 +35,16 @@ class Oled {
         void SetWakeUpMode(OledWakeUpMode mode);
         bool WakeUpPulse();
 
-        int8_t PrintChar(char c, size_t font_id, uint8_t col, uint8_t page,uint8_t offset);
-        void PrintStr(const std::string &s, size_t font_id, uint8_t col, uint8_t page,uint8_t offset);
-        void ClearStr(uint8_t col,uint8_t page, uint8_t wid);
+        int8_t PrintChar(char c,
+            size_t font_id, uint8_t col, uint8_t page,
+            uint8_t offset, bool border=false
+        );
+        void PrintStr(const std::string &s,
+            size_t font_id, uint8_t col, uint8_t page, uint8_t wid,
+            uint8_t offset, bool border=false
+        );
+        void ClearStr(size_t font_id, uint8_t col,uint8_t page, 
+            uint8_t wid, uint8_t offset=0, bool border=false);
 
         void Spin(unsigned long ts);
 };

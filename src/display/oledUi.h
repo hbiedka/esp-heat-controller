@@ -12,14 +12,16 @@ class TextField {
         uint8_t len;
         uint8_t font;
         uint8_t offset;
+        bool border = false;
 
     public:
-        TextField(uint8_t _x, uint8_t _y, uint8_t _len, uint8_t _font, uint8_t _offset) :
+        TextField(uint8_t _x, uint8_t _y, uint8_t _len, uint8_t _font, uint8_t _offset, bool border=false) :
             x(_x),
             y(_y),
             len(_len),
             font(_font),
-            offset(_offset)
+            offset(_offset),
+            border(border)
         {}
 
         TextField(const TextField &tf, uint8_t _x, uint8_t _y) :
@@ -27,7 +29,8 @@ class TextField {
             y(tf.y+_y),
             len(tf.len),
             font(tf.font),
-            offset(tf.offset)
+            offset(tf.offset),
+            border(tf.border)
         {}
 };
 

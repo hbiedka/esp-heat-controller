@@ -7,6 +7,8 @@
 struct Font {
     uint8_t first_ch;
     uint8_t last_ch;
+    uint8_t height;
+    uint8_t borderPadding;
     const uint16_t *data;
     const uint16_t *offsets;
 };
@@ -246,8 +248,8 @@ const uint16_t F2_charoffsets[] PROGMEM = {
 };
 
 
-Font F1{32,129,F1_chardata,F1_charoffsets};
-Font F2{32,127,F2_chardata,F2_charoffsets};
+Font F1{32,129,13,2,F1_chardata,F1_charoffsets};
+Font F2{32,127,15,0,F2_chardata,F2_charoffsets};
 
 Font *fonts[] = {&F1,&F2};
 

@@ -2,10 +2,9 @@
 
 void ActiveTextField::Print(const std::string &s) {
     Clear();
-    //TODO: limit length
-    oled.PrintStr(s,font,x,y,offset);
+    oled.PrintStr(s,font,x,y,len,offset,border);
 }
 
 void ActiveTextField::Clear() {
-    oled.ClearStr(x,y,len);
+    oled.ClearStr(font,x,y,len,offset,border);
 }
