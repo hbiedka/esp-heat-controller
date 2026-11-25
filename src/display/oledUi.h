@@ -43,7 +43,7 @@ class ActiveTextField : public TextField {
             oled(_oled)
         {}
 
-        void Print(const std::string &s);
+        void Print(const std::string &s, bool invert=false);
         void Clear();
 };
 

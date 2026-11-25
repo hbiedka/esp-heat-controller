@@ -1,8 +1,7 @@
 #include "oledUi.h"
 
-void ActiveTextField::Print(const std::string &s) {
-    Clear();
-    oled.PrintStr(s,font,x,y,len,offset,border);
+void ActiveTextField::Print(const std::string &s,bool invert) {
+    oled.PrintStr(s,font,x,y,len,offset,border,invert);
 }
 
 void ActiveTextField::Clear() {

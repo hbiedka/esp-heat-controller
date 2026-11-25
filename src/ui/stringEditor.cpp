@@ -74,12 +74,13 @@ void StringEditor::RedrawKeyboard() {
     for (size_t i = 0; i < kbdNumFields; i++) {
         size_t posToShow = displayOffset+i;
         if (posToShow < chars.size()) {
-            if (cursorPos == CHAR && posToShow == charPos)
+            bool underlight = cursorPos == CHAR && posToShow == charPos;
+            if (underlight)
                 ui[1][i].Print(brick);
             else
                 ui[1][i].Clear();
 
-            ui[2][i].Print(std::string{chars.at(posToShow)});
+            ui[2][i].Print(std::string{chars.at(posToShow)},underlight);
         }
     }
 
