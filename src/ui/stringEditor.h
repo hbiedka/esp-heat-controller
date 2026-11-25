@@ -20,7 +20,6 @@ class StringEditor
         std::string label;
         std::string value;
 
-        std::vector<TextField> keyboardPtrTemplate{};
         std::vector<TextField> keyboardTemplate{};
         std::vector<UiTemplateEntry> editorTemplate{};
         const size_t kbdNumFields = 9;

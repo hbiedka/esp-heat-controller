@@ -3,13 +3,10 @@
 std::vector<TextField> editorItem{
     TextField(2,0,60,0,0),     //label
     TextField(2,2,120,0,2,true),     //value
-    TextField(2,4,8,0,5),  //backspace pointer
     TextField(2,6,8,0,0),  //backspace
-    TextField(110,4,18,0,5),  //ok pointer
     TextField(110,6,18,0,0),  //ok
 };
 
-static const std::string brick{ (char)127 };
 static const std::string backsp{ (char)129 };
 
 const std::string chars{"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnoprqrstuvwxyz1234567890!@#$%^&*,./?-_=+;:'\"[]{}<>\\|"};
@@ -24,13 +21,11 @@ StringEditor::StringEditor(Ui &_ui,
 {
 
     for (size_t i = 0; i < kbdNumFields; i++) {
-        keyboardPtrTemplate.push_back(TextField(i*10,0,10,0,5));
         keyboardTemplate.push_back(TextField(i*10,0,10,0,0));
     }
 
     editorTemplate = std::vector<UiTemplateEntry>{
         {editorItem,0,0},
-        {keyboardPtrTemplate,12,4},
         {keyboardTemplate,12,6}
     };
 
@@ -47,9 +42,6 @@ void StringEditor::Show()
         throw std::runtime_error("Getter returned invalid return code");
 
     ui[0][0].Print(label);
-    ui[0][3].Print(backsp);
-    ui[0][5].Print("OK");
-
     Redraw();
 }
 
@@ -75,25 +67,13 @@ void StringEditor::RedrawKeyboard() {
         size_t posToShow = displayOffset+i;
         if (posToShow < chars.size()) {
             bool underlight = cursorPos == CHAR && posToShow == charPos;
-            if (underlight)
-                ui[1][i].Print(brick);
-            else
-                ui[1][i].Clear();
-
-            ui[2][i].Print(std::string{chars.at(posToShow)},underlight);
+            ui[1][i].Print(std::string{chars.at(posToShow)},underlight);
         }
     }
 
-    if (cursorPos == BACKSPACE)
-        ui[0][2].Print(brick);
-    else
-        ui[0][2].Clear();
-
-    if (cursorPos == OK)
-        ui[0][4].Print(brick);
-    else
-        ui[0][4].Clear();
-
+    // reprint backspace/ok
+    ui[0][2].Print(backsp,cursorPos==BACKSPACE);
+    ui[0][3].Print("OK",cursorPos==OK);
 }
 
 void StringEditor::ButtonCallback(uint8_t id, bool hold)
