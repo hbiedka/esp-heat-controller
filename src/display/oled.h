@@ -41,7 +41,7 @@ class Oled {
         );
         void PrintStr(const std::string &s,
             size_t font_id, uint8_t col, uint8_t page, uint8_t wid,
-            uint8_t offset, bool border=false, bool invert=false
+            uint8_t offset, bool border=false, uint8_t padding=0, bool invert=false
         );
         void ClearStr(size_t font_id, uint8_t col,uint8_t page, uint8_t wid,
             uint8_t offset=0, bool border=false, bool invert = false

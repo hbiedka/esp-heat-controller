@@ -133,7 +133,7 @@ int8_t Oled::PrintChar(char c,
 
 void Oled::PrintStr(const std::string &s,
         size_t font_id, uint8_t col, uint8_t page, uint8_t wid,
-        uint8_t offset, bool border, bool invert
+        uint8_t offset, bool border, uint8_t padding, bool invert
     ) {
     uint8_t c = col;
     int8_t newc;
@@ -148,6 +148,8 @@ void Oled::PrintStr(const std::string &s,
         limit = col+wid-2;
     }
 
+    // add padding
+    c+=padding;
 
     for(unsigned int i = 0; i < s.length(); i++) {
         if (c > 128) break;

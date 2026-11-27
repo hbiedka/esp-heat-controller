@@ -21,7 +21,7 @@ StringEditor::StringEditor(Ui &_ui,
 {
 
     for (size_t i = 0; i < kbdNumFields; i++) {
-        keyboardTemplate.push_back(TextField(i*10,0,10,0,0));
+        keyboardTemplate.push_back(TextField(i*10,0,10,0,0,false,1));
     }
 
     editorTemplate = std::vector<UiTemplateEntry>{
