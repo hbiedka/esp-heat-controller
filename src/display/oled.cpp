@@ -139,6 +139,9 @@ void Oled::PrintStr(const std::string &s,
     int8_t newc;
     uint8_t limit = col+wid;
 
+    //limit to display size
+    if (limit > 128) limit = 128;
+
     //clear always before print
     ClearStr(font_id,col,page,wid,offset,border,invert);
 
@@ -148,17 +151,19 @@ void Oled::PrintStr(const std::string &s,
         limit = col+wid-2;
     }
 
-    // add padding
-    c+=padding;
+    uint8_t textLen = 0;
+    size_t numCharsToShow = 0;
+    for (size_t i = 0; i <s.length(); i++) {
+        textLen += GetCharWidth(s[i],font_id);
+        if (c+textLen > limit) break;
+        numCharsToShow++;
+    }
 
-    for(unsigned int i = 0; i < s.length(); i++) {
-        if (c > 128) break;
-        newc = c + GetCharWidth(s[i],font_id);
-        if (newc < 0) return;
+    // add padding, but only if there is a space to
+    if (c + textLen + padding <= limit)
+        c+=padding;
 
-        //detect if the next char would exceed the width limit
-        if (newc > limit) break;
-
+    for(unsigned int i = 0; i < numCharsToShow; i++) {
         newc = PrintChar(s[i],font_id,c,page,offset,border,invert);
         if (newc < 0) return;
         c = newc;
